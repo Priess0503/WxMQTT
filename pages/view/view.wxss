@@ -1,0 +1,130 @@
+/* pages/view/view.wxss */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20rpx 16rpx;  /* 减小左右padding */
+    background-color: #fff;
+    width: 750rpx;
+    box-sizing: border-box;
+    gap: 12rpx;  /* 减小元素间距 */
+}
+  
+.box {
+    height: 64rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8rpx;
+    border: 2rpx solid #ddd;
+    background: #fff;
+    white-space: nowrap;  /* 防止文字换行 */
+}
+  
+.status-box {
+    width: 220rpx;  /* 增加宽度以确保文本完全显示 */
+    height: 72rpx;
+    border: none;
+}
+  
+.status-box.connected {
+    background-color: #4CAF50;
+    color: white;
+}
+  
+.status-box.disconnected {
+    background-color: #f56c6c;
+    color: white;
+}
+  
+.action-btn {
+    width: 200rpx;  /* 减小宽度 */
+    font-size: 26rpx;  /* 稍微减小字体 */
+}
+
+/* 默认发布者按钮样式 */
+.publisher {
+    color: #1890ff;
+    border-color: #1890ff;
+}
+
+/* 默认订阅者按钮样式 */
+.subscriber {
+    color: #f5a623;
+    border-color: #f5a623;
+}
+
+/* 发布者按钮的活动状态样式 */
+.publisher.active {
+    background-color: #1890ff; /* 发布者按钮的背景色 */
+    color: white; /* 发布者按钮的字体颜色 */
+}
+
+/* 订阅者按钮的活动状态样式 */
+.subscriber.active {
+    background-color: #f5a623; /* 订阅者按钮的背景色 */
+    color: white; /* 订阅者按钮的字体颜色 */
+}
+
+/* 数据显示容器 */
+.data-container {
+    display: flex;
+    justify-content: space-between; /* 均匀分布 */
+    margin-top: 20rpx; /* 上间距 */
+}
+
+/* 数据框样式 */
+.data-box {
+  width: 300px;
+  background-color: rgba(255, 255, 255, 0.3); /* 半透明背景 */
+  backdrop-filter: blur(10px); /* 毛玻璃效果，模糊度可以根据需要调整 */
+  -webkit-backdrop-filter: blur(10px); /* Safari浏览器兼容 */
+  border-radius: 15px; /* 圆角 */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  padding: 10px; /* 内边距 */
+  margin: 10px; /* 外边距 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease-in-out; /* 过渡效果 */
+}
+.data-box:hover{
+  transform: translateY(-5px); /* 鼠标悬浮时上移 */
+  box-shadow: 0 6px 40px rgba(0, 0, 0, 0.2); /* 鼠标悬浮时阴影加深 */
+}
+/* 数据图标样式 */
+.data-icon {
+    width: 150rpx; /* 图标宽度 */
+    height: 150rpx; /* 图标高度 */
+    border-radius: 15px; /* 图片圆角 */
+}
+
+/* 数据标题样式 */
+.data-title {
+    font-size: 34rpx; /* 字体大小 */
+    color: #333; /* 字体颜色 */
+}
+
+/* 数据值样式 */
+.data-value {
+    font-size: 32rpx; /* 字体大小 */
+    font-weight: bold; /* 加粗 */
+}
+
+
+
+/* 设置按钮样式 */
+.settings-btn {
+    width: 64rpx;
+    font-size: 40rpx;
+    color: #666;
+}
+.data-info{
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}

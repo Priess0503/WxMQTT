@@ -1,0 +1,73 @@
+<!-- pages/view/view.wxml -->
+<view class="header">
+    <!-- 连接状态显示 -->
+    <view class="box status-box {{isConnected ? 'connected' : 'disconnected'}}" bindtap="toggleConnection">
+        <text>{{isConnected ? '已连接' : '未连接'}}</text>
+    </view>
+  
+    <!-- 发布者按钮 -->
+    <view class="box action-btn publisher {{sendPathVisible ? 'active':''}}" bindtap="addPublisher">
+        <text>发布主题</text>
+    </view>
+
+    <!-- 订阅者按钮 -->
+    <view class="box action-btn subscriber {{subscriptionPathVisible ? 'active':''}}" bindtap="addSubscriber">
+        <text>监听主题</text>
+    </view>
+  
+    <!-- 设置按钮 -->
+    <view class="box settings-btn" bindtap="toSettings">
+        <text>⚙</text>
+    </view>
+</view>
+
+<!-- 温度和湿度显示 -->
+<view class="data-container">
+    <view class="data-box">
+        <image class="data-icon" src="/images/wendu.png" /> <!-- 温度图标 -->
+        <view class="data-info">
+            <text class="data-title">温度</text>
+            <text class="data-value">{{temp}}°C</text>
+        </view>
+    </view>
+    <view class="data-box">
+        <image class="data-icon" src="/images/shidu.png" /> <!-- 湿度图标 -->
+        <view class="data-info">
+            <text class="data-title">湿度</text>
+            <text class="data-value">{{humi}}%</text>
+        </view>
+    </view>
+</view>
+<view class="data-container">
+<view class="data-box">
+  <image class="data-icon" src="/images/turang.png" /> <!-- 温度图标 -->
+  <view class="data-info">
+      <text class="data-title">土壤</text>
+      <text class="data-value">{{moisture}}%</text>
+  </view>
+</view>
+<view class="data-box">
+  <image class="data-icon" src="/images/ruqin.png" /> <!-- 报警图标 -->
+  <view class="data-info">
+      <text class="data-title">大棚灯</text>
+      <switch class="data-switch" color="#3d7ef9"  bindchange="onBeepChange1" checked="{{beepchecked1}}" />
+  </view>
+</view>
+
+</view>
+<view class="data-container">
+    <view class="data-box">
+        <image  class="data-icon" src="/images/deng.png"  /> <!-- 补光灯图标 -->
+        <view class="data-info">
+            <text class="data-title">门禁</text>
+            <switch class="data-switch" color="#3d7ef9"  bindchange="onLedChange" checked="{{ledchecked}}"/>
+        </view>
+    </view>
+    <view class="data-box">
+        <image class="data-icon" src="/images/ludeng.png" /> <!-- 报警图标 -->
+        <view class="data-info">
+            <text class="data-title">路灯</text>
+            <switch class="data-switch" color="#3d7ef9"  bindchange="onBeepChange" checked="{{beepchecked}}" />
+        </view>
+    </view>
+</view>

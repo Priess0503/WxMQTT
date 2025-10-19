@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "echarts": "^5.1.2",
+    "echarts-for-weixin": "^1.0.0"
+  }
+}

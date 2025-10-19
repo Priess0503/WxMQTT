@@ -1,0 +1,41 @@
+.container {
+  padding: 20px;
+}
+
+.form-group {
+  background: #fff;
+  border-radius: 8px;
+  padding: 0 15px;
+  margin-bottom: 20px;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.form-item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  width: 80px;
+  color: #333;
+  font-size: 14px;
+}
+
+.input {
+  flex: 1;
+  height: 40px;
+  font-size: 14px;
+}
+
+.button-group {
+  padding: 20px;
+}
+
+.save-btn {
+  width: 100%;
+} 

@@ -1,0 +1,48 @@
+{
+   "name": "taro-sample-weapp",
+   "version": "1.0.0",
+   "private": true,
+   "description": "与小程序原生融合的示例项目",
+   "main": "index.js",
+   "scripts": {
+      "build:weapp": "taro build --type weapp",
+      "build:h5": "taro build --type h5",
+      "build:rn": "taro build --type rn",
+      "dev:weapp": "npm run build:weapp -- --watch",
+      "dev:h5": "npm run build:h5 -- --watch",
+      "dev:rn": "npm run build:rn -- --watch",
+      "test": "echo \"Error: no test specified\" && exit 1"
+   },
+   "author": "",
+   "license": "MIT",
+   "dependencies": {
+      "@babel/runtime": "^7.8.4",
+      "@tarojs/components": "3.2.0",
+      "@tarojs/react": "3.2.0",
+      "@tarojs/runtime": "3.2.0",
+      "@tarojs/taro": "3.2.0",
+      "autoprefixer": "^9.7.4",
+      "echarts": "^5.1.2",
+      "echarts-for-weixin": "^1.0.0",
+      "nervjs": "^1.5.4",
+      "react": "^16.11.0",
+      "react-dom": "^16.12.0"
+   },
+   "devDependencies": {
+      "@babel/core": "^7.8.0",
+      "@babel/preset-typescript": "^7.8.3",
+      "@tarojs/mini-runner": "3.2.0",
+      "@types/node": "^10.5.8",
+      "@types/react": "^16.4.8",
+      "@types/redux-actions": "^2.3.0",
+      "@types/webpack-env": "^1.13.6",
+      "babel-loader": "^8.0.6",
+      "babel-preset-taro": "3.0.0-alpha.5",
+      "css-loader": "^3.4.2",
+      "eslint": "^6.8.0",
+      "eslint-config-taro": "3.0.0-alpha.5",
+      "eslint-plugin-import": "^2.12.0",
+      "eslint-plugin-react": "^7.8.2",
+      "eslint-plugin-react-hooks": "^1.6.1"
+   }
+}

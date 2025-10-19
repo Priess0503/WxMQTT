@@ -1,0 +1,245 @@
+<view class="container">
+  <!-- 顶部状态栏 -->
+  <view class="header">
+    <view class="header-left">
+      <view class="connection-status {{mqttStatus.connected ? 'connected' : mqttStatus.connecting ? 'connecting' : 'disconnected'}}">
+        <view class="status-dot"></view>
+        <text>{{mqttStatus.connected ? '已连接' : mqttStatus.connecting ? '连接中' : '未连接'}}</text>
+      </view>
+    </view>
+    <view class="header-right">
+      <button class="action-btn config-btn" bindtap="toMqttConfig">
+        <image src="/images/settings.png" mode="aspectFit"></image>
+        <text>配置</text>
+      </button>
+      <button class="action-btn device-btn" bindtap="toDeviceManager">
+        <image src="/images/device.png" mode="aspectFit"></image>
+        <text>设备</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 设备卡片区域 -->
+  <view class="cards-container">
+    <view class="device-card {{selectedDevice && selectedDevice.id === device.id ? 'selected' : ''}}" 
+          wx:for="{{devices}}" 
+          wx:key="id" 
+          wx:for-item="device"
+          bindtap="onDeviceSelect" 
+          data-id="{{device.id}}"
+          data-type="{{device.type}}">
+      <view class="card-header">
+        <view class="card-icon-wrapper">
+          <image class="card-icon" 
+                 src="{{device.type === 'temperature' ? '/images/temperature.png' : device.type === 'humidity' ? '/images/humidity.png':device.type === 'turang' ? '/images/tr.png' : device.type === 'waterquality' ? '/images/shuizhi.png':device.type === 'fengsu' ? '/images/fs.png' : device.type === 'led' ? '/images/led.png' : device.type === 'motor' ? '/images/dianji.png' : '/images/switch.png'}}" 
+                 mode="aspectFit"></image>
+        </view>
+        <text class="card-title">{{device.name}}</text>
+      </view>
+      <view class="card-content">
+        <block wx:if="{{device.type !== 'switch' && device.type !== 'led' && device.type !== 'motor'}}">
+          <text class="value">{{deviceData[device.id] ? deviceData[device.id].value : '--'}}</text>
+          <text class="unit">{{device.type === 'temperature' ? '°C' : device.type === 'humidity' ? '%' : device.type === 'turang' ? '%': device.type === 'fengsu' ? 'm/s': 'ppm'}}</text>
+          <text wx:if="{{device.type === 'waterquality' && deviceData[device.id] && deviceData[device.id].quality}}" 
+                class="quality-text {{deviceData[device.id].quality === '优' ? 'quality-good' : deviceData[device.id].quality === '中' ? 'quality-medium' : 'quality-bad'}}">
+            {{deviceData[device.id].quality}}
+          </text>
+          <!--风量状态-->
+          <text wx:if="{{device.type === 'fengsu' && deviceData[device.id] && deviceData[device.id].FDJ}}" 
+                class="quality-text {{deviceData[device.id].FDJ === '无风' ? 'wufeng' : deviceData[device.id].FDJ === '软风' ? 'ruanfeng' : deviceData[device.id].FDJ === '轻风' ? 'qingfeng' : deviceData[device.id].FDJ === '微风' ? 'weifeng' : deviceData[device.id].FDJ === '和风' ? 'hefeng' : deviceData[device.id].FDJ === '轻劲风' ? 'qingjingfeng' : deviceData[device.id].FDJ === '强风' ? 'qiangfeng' : deviceData[device.id].FDJ === '疾风' ? 'jifeng' : deviceData[device.id].FDJ === '大风' ? 'dafeng' : deviceData[device.id].FDJ === '烈风' ? 'liefeng' : deviceData[device.id].FDJ === '狂风' ? 'kuangfeng' : deviceData[device.id].FDJ === '暴风' ? 'baofeng': 'quality-bad'}}">
+            {{deviceData[device.id].FDJ}}
+          </text>
+        </block>
+        <block wx:elif="{{device.type === 'switch'}}">
+          <view class="switch-status">
+            <image class="led-icon" 
+                   src="{{deviceData[device.id] ? '/images/led01.png' : '/images/led02.png'}}" 
+                   mode="aspectFit"></image>
+            <text bindtap="onSwitchTextClick" data-id="{{device.id}}">{{deviceData[device.id] ? '开启' : '关闭'}}</text>
+          </view>
+        </block>
+        <block wx:elif="{{device.type === 'led'}}">
+          <view class="led-control-row">
+            <view class="led-status">
+              <image class="led-icon" 
+                     src="{{deviceData[device.id] ? '/images/led01.png' : '/images/led02.png'}}" 
+                     mode="aspectFit"></image>
+              <text bindtap="onSwitchTextClick" data-id="{{device.id}}">{{deviceData[device.id] ? '开启' : '关闭'}}</text>
+            </view>
+            <view class="led-more" catchtap="showLedControl" data-id="{{device.id}}">
+              <text>更多»</text>
+            </view>
+          </view>
+        </block>
+        <block wx:elif="{{device.type === 'motor'}}">
+          <view class="motor-control-row">
+            <view class="motor-status">
+              <image class="motor-icon" 
+                     src="{{deviceData[device.id] ? '/images/led01.png' : '/images/led02.png'}}" 
+                     mode="aspectFit"></image>
+              <text catchtap="onMotorToggle" data-id="{{device.id}}">{{deviceData[device.id] ? '关闭' : '正转'}}</text>
+            </view>
+            <view class="motor-more" catchtap="showMotorControl" data-id="{{device.id}}">
+              <text>更多»</text>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据趋势图 -->
+  <view class="chart-section" wx:if="{{selectedDevice && showChart}}">
+    <view class="chart-header">
+      <text class="chart-title">{{selectedDevice.type === 'temperature' ? '温度' : selectedDevice.type === 'humidity' ? '湿度' : selectedDevice.type === 'tangrang' ? '土壤' : selectedDevice.type === 'fengsu' ? '风速' : selectedDevice.type === 'waterquality' ? '水质' : '水质'}}趋势</text>
+      <view class="time-range {{timeRange === 'week' ? 'week' : ''}}">
+        <view class="range-btn {{timeRange === 'day' ? 'active' : ''}}" 
+              bindtap="onTimeRangeChange" 
+              data-range="day">24小时</view>
+        <view class="range-btn {{timeRange === 'week' ? 'active' : ''}}" 
+              bindtap="onTimeRangeChange" 
+              data-range="week">7天</view>
+      </view>
+    </view>
+    <view class="chart-container">
+      <canvas type="2d" id="lineChart" style="width: 100%; height: 100%;"></canvas>
+    </view>
+  </view>
+
+  <!-- LED控制弹窗 -->
+  <view class="led-dialog-mask" wx:if="{{showLedDialog}}" bindtap="closeLedDialog">
+    <view class="led-dialog" catchtap="stopPropagation">
+      <view class="led-dialog-header">
+        <text class="led-dialog-title">LED灯带控制</text>
+        <view class="close-btn" bindtap="closeLedDialog">×</view>
+      </view>
+      
+      <view class="led-dialog-content">
+        <!-- 亮度控制 -->
+        <view class="brightness-control">
+          <view class="control-label">
+            <image src="/images/led.png" mode="aspectFit" class="control-icon"></image>
+            <text>亮度</text>
+          </view>
+          <view class="brightness-slider-container">
+            <slider class="brightness-slider" 
+                    min="0" 
+                    max="100" 
+                    value="{{ledBrightness}}" 
+                    bindchange="onBrightnessChange"
+                    activeColor="#1890ff"
+                    backgroundColor="#e8e8e8"/>
+            <text class="brightness-value">{{ledBrightness}}%</text>
+          </view>
+        </view>
+
+        <!-- 颜色控制 -->
+        <view class="color-control">
+          <view class="control-label">
+            <text>颜色</text>
+          </view>
+          <view class="color-wheel-container">
+            <canvas type="2d" id="colorWheel" class="color-wheel" 
+                    catchtouchstart="onColorWheelTouch" 
+                    catchtouchmove="onColorWheelTouch">
+            </canvas>
+            <view class="color-preview" style="background-color: {{ledColorString || '#ffffff'}}"></view>
+          </view>
+        </view>
+
+        <!-- 快捷颜色按钮 -->
+        <view class="quick-colors">
+          <view class="quick-color-btn" 
+                wx:for="{{quickColors}}" 
+                wx:key="index"
+               style="background-color: {{item.color}}"
+                bindtap="onQuickColorSelect"
+                data-r="{{item.rgb.r}}"
+                data-g="{{item.rgb.g}}"
+                data-b="{{item.rgb.b}}">
+          </view>
+        </view>
+      </view>
+
+      <view class="led-dialog-footer">
+        <button class="cancel-btn" bindtap="closeLedDialog">取消</button>
+        <button class="confirm-btn" bindtap="applyLedSettings">应用</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 电机控制弹窗 -->
+  <view class="motor-dialog-mask" wx:if="{{showMotorDialog}}" bindtap="closeMotorDialog">
+    <view class="motor-dialog" catchtap="stopPropagation">
+      <view class="motor-dialog-header">
+        <text class="motor-dialog-title">电机控制</text>
+        <view class="close-btn" bindtap="closeMotorDialog">×</view>
+      </view>
+      
+      <view class="motor-dialog-content">
+        <!-- 快捷控制按钮 -->
+        <view class="quick-controls">
+          <button class="quick-btn forward-5s" bindtap="onMotorQuickControl" data-action="forward" data-duration="5">
+            <text class="btn-text">正转 5s</text>
+          </button>
+          <button class="quick-btn reverse-5s" bindtap="onMotorQuickControl" data-action="reverse" data-duration="5">
+            <text class="btn-text">反转 5s</text>
+          </button>
+          <button class="quick-btn forward-continuous" bindtap="onMotorQuickControl" data-action="forward" data-duration="0">
+            <text class="btn-text">持续正转</text>
+          </button>
+          <button class="quick-btn reverse-continuous" bindtap="onMotorQuickControl" data-action="reverse" data-duration="0">
+            <text class="btn-text">持续反转</text>
+          </button>
+        </view>
+
+        <!-- 自定义控制 -->
+        <view class="custom-control">
+          <view class="control-card">
+            <view class="card-header">
+              <image src="/images/dianji.png" mode="aspectFit" class="card-icon"></image>
+              <text class="card-title">电机方向</text>
+              <text class="card-subtitle">{{motorDirection === 'forward' ? '正转' : '反转'}}</text>
+            </view>
+            <picker mode="selector" range="{{motorDirections}}" range-key="text" value="{{motorDirectionIndex}}" bindchange="onMotorDirectionChange">
+              <view class="picker-input">
+                <text>{{motorDirections[motorDirectionIndex].text}}</text>
+                <text class="picker-arrow">▼</text>
+              </view>
+            </picker>
+          </view>
+
+          <view class="control-card">
+            <view class="card-header">
+              <image src="/images/dianji.png" mode="aspectFit" class="card-icon"></image>
+              <text class="card-title">运行时间</text>
+              <text class="card-subtitle">{{motorDuration}} 秒</text>
+            </view>
+            <view class="duration-control">
+              <button class="duration-btn minus" bindtap="onMotorDurationChange" data-action="minus">-</button>
+              <text class="duration-value">{{motorDuration}}</text>
+              <button class="duration-btn plus" bindtap="onMotorDurationChange" data-action="plus">+</button>
+            </view>
+          </view>
+        </view>
+
+        <!-- 主要控制按钮 -->
+        <view class="main-controls">
+          <button class="main-btn start-btn" bindtap="onMotorStart">
+            <text class="btn-text">启动电机</text>
+          </button>
+          <button class="main-btn stop-btn" bindtap="onMotorStop">
+            <text class="btn-text">紧急停止</text>
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{devices.length === 0}}">
+    <image src="/images/empty.png" mode="aspectFit"/>
+    <text>空空如也</text>
+    <button class="add-device-btn" bindtap="toDeviceManager">添加设备</button>
+  </view>
+</view>

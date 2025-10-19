@@ -1,0 +1,187 @@
+<view class="container">
+  <view class="header">
+    <text class="title">设备管理</text>
+    <button class="add-btn" bindtap="showAddDeviceDialog">添加设备</button>
+  </view>
+
+  <view class="device-list">
+    <block wx:for="{{devices}}" wx:key="id">
+      <view class="device-item">
+        <view class="device-info">
+          <view class="device-icon">
+            <image src="/images/{{item.type}}.png" mode="aspectFit"></image>
+          </view>
+          <view class="device-content">
+            <view class="device-name">{{item.name}}</view>
+            <view class="device-topic" wx:if="{{item.type !== 'switch' && item.type !== 'led' && item.type !== 'motor'}}">订阅主题：{{item.topic}}</view>
+            <view class="device-topic" wx:if="{{item.type === 'switch' || item.type === 'led' || item.type === 'motor'}}">发布主题：{{item.publishTopic}}</view>
+          </view>
+        </view>
+        <view class="device-action">
+          <view class="action-buttons">
+            <button class="edit-btn" bindtap="showEditDeviceDialog" data-id="{{item.id}}">编辑</button>
+            <button class="delete-btn" bindtap="deleteDevice" data-id="{{item.id}}">删除</button>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 添加设备弹窗 -->
+  <view class="dialog-mask" wx:if="{{showAddDialog}}" bindtap="closeAddDeviceDialog">
+    <view class="dialog" catchtap="stopPropagation">
+      <view class="dialog-header">
+        <text class="dialog-title">添加设备</text>
+        <view class="close-btn" bindtap="closeAddDeviceDialog">×</view>
+      </view>
+      
+      <view class="dialog-content">
+        <view class="form-item">
+          <text class="label">设备名称</text>
+          <input class="input" placeholder="请输入设备名称" value="{{newDevice.name}}" bindinput="onDeviceNameInput"/>
+        </view>
+
+        <view class="form-item">
+          <text class="label">设备类型</text>
+          <view class="type-selector">
+            <view class="type-option {{newDevice.type === 'temperature' ? 'selected' : ''}}" 
+                  data-type="temperature" 
+                  bindtap="onDeviceTypeSelect">
+              <image src="/images/temp.png" mode="aspectFit"></image>
+              <text>温度</text>
+            </view>
+            <view class="type-option {{newDevice.type === 'humidity' ? 'selected' : ''}}" 
+                  data-type="humidity" 
+                  bindtap="onDeviceTypeSelect">
+              <image src="/images/water.png" mode="aspectFit"></image>
+              <text>湿度</text>
+            </view>
+            <view class="type-option {{newDevice.type === 'switch' ? 'selected' : ''}}" 
+                  data-type="switch" 
+                  bindtap="onDeviceTypeSelect">
+              <image src="/images/switch.png" mode="aspectFit"></image>
+              <text>开关</text>
+            </view>
+            <view class="type-option {{newDevice.type === 'waterquality' ? 'selected' : ''}}" 
+                  data-type="waterquality" 
+                  bindtap="onDeviceTypeSelect">
+              <image src="/images/shuizhi.png" mode="aspectFit"></image>
+              <text>水质</text>
+            </view>
+             <!--添加土壤-->
+          <view class="type-option {{newDevice.type === 'turang' ? 'selected' : ''}}" 
+                data-type="turang" 
+                bindtap="onDeviceTypeSelect">
+             <image src="/images/tr.png" mode="aspectFit"></image>
+          <text>土壤</text>
+          </view> 
+          <!--风速传感器-->
+          <view class="type-option {{newDevice.type === 'fengsu' ? 'selected' : ''}}" 
+          data-type="fengsu" 
+          bindtap="onDeviceTypeSelect">
+          <image src="/images/fs.png" mode="aspectFit"></image>
+          <text>风速</text>
+           </view> 
+          <!--led灯带-->
+          <view class="type-option {{newDevice.type === 'led' ? 'selected' : ''}}" 
+          data-type="led" 
+          bindtap="onDeviceTypeSelect">
+      <image src="/images/led.png" mode="aspectFit"></image>
+      <text>灯带</text>
+    </view>
+          <!--电机-->
+          <view class="type-option {{newDevice.type === 'motor' ? 'selected' : ''}}" 
+          data-type="motor" 
+          bindtap="onDeviceTypeSelect">
+      <image src="/images/dianji.png" mode="aspectFit"></image>
+      <text>电机</text>
+    </view>
+          </view>
+        </view>
+
+        <view class="form-item" wx:if="{{newDevice.type !== 'switch' && newDevice.type !== 'led' && newDevice.type !== 'motor'}}">
+          <text class="label">订阅主题</text>
+          <input class="input" placeholder="请输入订阅主题" value="{{newDevice.topic}}" bindinput="onTopicInput"/>
+        </view>
+
+        <view class="form-item" wx:if="{{newDevice.type === 'switch' || newDevice.type === 'led'}}">
+          <text class="label">发布主题</text>
+          <input class="input" placeholder="请输入发布主题，如：myhome/leds" value="{{newDevice.publishTopic}}" bindinput="onPublishTopicInput"/>
+        </view>
+
+        <view class="form-item" wx:if="{{newDevice.type === 'motor'}}">
+          <text class="label">发布主题</text>
+          <input class="input" placeholder="请输入发布主题，如：myhome/motor" value="{{newDevice.publishTopic}}" bindinput="onPublishTopicInput"/>
+        </view>
+
+        <view class="form-item" wx:if="{{newDevice.type === 'switch' || newDevice.type === 'led'}}">
+          <text class="label">开启命令</text>
+          <input class="input" placeholder="请输入开启命令，如：{&quot;state&quot;: &quot;ON&quot;}" value="{{newDevice.onCommand}}" bindinput="onCommandInput" data-command-type="on"/>
+        </view>
+
+        <view class="form-item" wx:if="{{newDevice.type === 'switch' || newDevice.type === 'led'}}">
+          <text class="label">关闭命令</text>
+          <input class="input" placeholder="请输入关闭命令，如：{&quot;state&quot;: &quot;OFF&quot;}" value="{{newDevice.offCommand}}" bindinput="onCommandInput" data-command-type="off"/>
+        </view>
+      </view>
+
+      <view class="dialog-footer">
+        <button class="cancel-btn" bindtap="closeAddDeviceDialog">取消</button>
+        <button class="confirm-btn" bindtap="addDevice">确定</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑设备弹窗 -->
+  <view class="dialog-mask" wx:if="{{showEditDialog}}" bindtap="closeEditDeviceDialog">
+    <view class="dialog" catchtap="stopPropagation">
+      <view class="dialog-header">
+        <text class="dialog-title">编辑设备</text>
+        <view class="close-btn" bindtap="closeEditDeviceDialog">×</view>
+      </view>
+      
+      <view class="dialog-content">
+        <view class="form-item">
+          <text class="label">设备名称</text>
+          <input class="input" placeholder="请输入设备名称" value="{{editDevice.name}}" bindinput="onEditDeviceNameInput"/>
+        </view>
+
+        <block wx:if="{{editDevice.type !== 'switch' && editDevice.type !== 'led' && editDevice.type !== 'motor'}}">
+          <view class="form-item">
+            <text class="label">订阅主题</text>
+            <input class="input" placeholder="请输入订阅主题" value="{{editDevice.topic}}" bindinput="onEditTopicInput"/>
+          </view>
+        </block>
+
+        <block wx:if="{{editDevice.type === 'switch' || editDevice.type === 'led'}}">
+          <view class="form-item">
+            <text class="label">发布主题</text>
+            <input class="input" placeholder="请输入发布主题" value="{{editDevice.publishTopic}}" bindinput="onEditPublishTopicInput"/>
+          </view>
+
+          <view class="form-item">
+            <text class="label">开启命令</text>
+            <input class="input" placeholder="请输入开启命令" value="{{editDevice.onCommand}}" bindinput="onEditCommandInput" data-command-type="on"/>
+          </view>
+
+          <view class="form-item">
+            <text class="label">关闭命令</text>
+            <input class="input" placeholder="请输入关闭命令" value="{{editDevice.offCommand}}" bindinput="onEditCommandInput" data-command-type="off"/>
+          </view>
+        </block>
+
+        <block wx:if="{{editDevice.type === 'motor'}}">
+          <view class="form-item">
+            <text class="label">发布主题</text>
+            <input class="input" placeholder="请输入发布主题" value="{{editDevice.publishTopic}}" bindinput="onEditPublishTopicInput"/>
+          </view>
+        </block>
+      </view>
+
+      <view class="dialog-footer">
+        <button class="cancel-btn" bindtap="closeEditDeviceDialog">取消</button>
+        <button class="confirm-btn" bindtap="updateDevice">确定</button>
+      </view>
+    </view>
+  </view>
+</view> 

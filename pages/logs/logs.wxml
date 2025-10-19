@@ -1,0 +1,24 @@
+<view class="container">
+<view class="input-group">
+  <label>MQTT 客户端ID:</label>
+  <view class="input-button-group">
+    <input class="client-input" placeholder="请输入 Client Id" value="{{clientId}}" bindinput="input_msg" data-id="clientId" />
+    <button class="generate-button" bindtap="generateClientId">生成</button>
+  </view>
+</view>
+  <view class="input-group">
+    <label>主机地址:</label>
+    <input placeholder="请输入 Host" bindinput="input_msg" value="{{host}}"  data-id="host" />
+  </view>
+  <view class="input-group">
+    <label>用户名：</label>
+    <input placeholder="请输入用户名" bindinput="input_msg" value="{{username}}"  data-id="username" />
+  </view>
+  <view class="input-group">
+    <label>密码：</label>
+    <input type="password" placeholder="请输入密码" bindinput="input_msg" value="{{password}}"  data-id="password" />
+  </view>
+  <view class="button-group">
+    <button class="connect" bind:tap="connectAndNavigate" disabled="{{connectDisabled}}">连接</button>
+  </view>
+</view>

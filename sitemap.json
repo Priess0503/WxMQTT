@@ -1,0 +1,7 @@
+{
+  "desc": "作者：逍遥子大表哥，微信公众号Kali笔记 ",
+  "rules": [{
+  "action": "allow",
+  "page": "*"
+  }]
+}

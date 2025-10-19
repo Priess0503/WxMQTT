@@ -1,0 +1,20 @@
+<!-- MQTT配置页面 -->
+<view class="container">
+  <view class="form-group">
+    <view class="form-item">
+      <text class="label">服务器地址</text>
+      <input class="input" type="text" placeholder="请输入服务器地址（如：office.bbskali.cn）" value="{{config.host}}" bindinput="onHostInput"/>
+    </view>
+    <view class="form-item">
+      <text class="label">用户名</text>
+      <input class="input" type="text" placeholder="请输入用户名" value="{{config.username}}" bindinput="onUsernameInput"/>
+    </view>
+    <view class="form-item">
+      <text class="label">密码</text>
+      <input class="input" type="password" placeholder="请输入密码" value="{{config.password}}" bindinput="onPasswordInput"/>
+    </view>
+  </view>
+  <view class="button-group">
+    <button class="save-btn" type="primary" bindtap="saveConfig">保存配置</button>
+  </view>
+</view> 

@@ -1,0 +1,69 @@
+.container {
+  padding: 30rpx; /* 容器的内边距 */
+}
+
+.input-group {
+  width: 100%; /* 确保输入组宽度一致 */
+  margin-bottom: 10px; /* 输入组底部间距 */
+}
+
+.input-button-group {
+  display: flex; /* 使用 flex 布局 */
+  align-items: center; /* 垂直居中对齐 */
+  width: 100%; /* 确保宽度一致 */
+}
+
+.client-input {
+  flex: 4; /* 输入框占 80% 的宽度 */
+  margin-right: 10px; /* 输入框右侧间距 */
+  padding: 5px; /* 输入框内边距 */
+  border: 1px solid #ccc; /* 输入框边框 */
+  border-radius: 4px; /* 输入框圆角 */
+}
+
+.generate-button {
+  flex: 1; /* 按钮占 20% 的宽度 */
+  background-color: #007bff; /* 按钮背景色 */
+  color: white; /* 按钮文字颜色 */
+  border: none; /* 按钮无边框 */
+  padding: 5px 10px; /* 按钮内边距 */
+  border-radius: 4px; /* 按钮圆角 */
+  cursor: pointer; /* 鼠标指针样式 */
+}
+
+.generate-button:active {
+  background-color: #0056b3; /* 按钮按下时的背景色 */
+}
+
+label {
+  display: block; /* 标签块级显示 */
+  margin-bottom: 8rpx; /* 标签底部间距 */
+  font-weight: bold; /* 标签字体加粗 */
+}
+
+input {
+  width: 96%; /* 输入框宽度 */
+  padding: 12rpx; /* 输入框内边距 */
+  border: 1rpx solid #ccc; /* 输入框边框 */
+  border-radius: 8rpx; /* 输入框圆角 */
+  outline: none; /* 输入框无轮廓 */
+  transition: border-color 0.3s, box-shadow 0.3s; /* 输入框过渡效果 */
+}
+
+input:focus {
+  border-color: #007aff; /* 输入框聚焦时边框颜色 */
+  box-shadow: 0 0 8rpx #007aff; /* 输入框聚焦时阴影 */
+}
+
+.button-group {
+  text-align: center; /* 按钮组居中对齐 */
+}
+
+button.connect {
+  padding: 15rpx 30rpx; /* 按钮内边距 */
+  background-color: #007aff; /* 按钮背景色 */
+  color: white; /* 按钮文字颜色 */
+  border: none; /* 按钮无边框 */
+  border-radius: 8rpx; /* 按钮圆角 */
+  cursor: pointer; /* 鼠标指针样式 */
+}

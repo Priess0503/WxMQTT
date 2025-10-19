@@ -1,0 +1,1233 @@
+/* 基础容器 */
+.container {
+  padding: 24rpx;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* 头部区域 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  margin-bottom: 32rpx;
+  background: white;
+  border-radius: 16rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+}
+
+.header-right {
+  display: flex;
+  gap: 20rpx;  /* 增加按钮之间的间距 */
+}
+
+/* 按钮系统 */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24rpx;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  color: white;
+  border: none;
+  line-height: 1;
+  margin: 0;
+  width: 160rpx;
+  height: 68rpx;
+  box-sizing: border-box;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  font-weight: 500;
+  background: #1890ff !important; /* 固定蓝色背景 */
+}
+
+.action-btn::after {
+  display: none;
+}
+
+.action-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.1);
+}
+
+.action-btn image {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 8rpx;
+}
+
+/* 连接状态按钮 */
+.connection-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24rpx;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  line-height: 1;
+  margin: 0;
+  width: 160rpx;
+  height: 68rpx;
+  box-sizing: border-box;
+  background: white !important; /* 固定白色背景 */
+  color: #666 !important; /* 固定文字颜色 */
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.status-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  margin-right: 10rpx;
+  flex-shrink: 0;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.12);
+}
+
+.connection-status.connected .status-dot {
+  background-color: #52c41a;
+}
+
+.connection-status.connecting .status-dot {
+  background-color: #faad14;
+  animation: blink 1s infinite;
+}
+
+.connection-status.disconnected .status-dot {
+  background-color: #ff4d4f;
+}
+
+/* 设备卡片容器 */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+/* 设备卡片 */
+.device-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.device-card.selected {
+  transform: translateY(-2rpx);
+  box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.08);
+}
+
+.device-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6rpx;
+  height: 100%;
+  background: linear-gradient(180deg, #1890ff, #52c41a);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.device-card.selected::after {
+  opacity: 1;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.card-icon-wrapper {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16rpx;
+  transition: all 0.3s ease;
+}
+
+.card-icon {
+  width: 36rpx;
+  height: 36rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+}
+
+/* 温湿度显示 */
+.value {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #1890ff;
+  line-height: 1;
+  font-family: "DIN Alternate", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.unit {
+  font-size: 26rpx;
+  color: #666;
+  margin-left: 8rpx;
+  font-weight: 500;
+}
+
+/* 图表区域 */
+.chart-section {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-top: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.chart-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.time-range {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  padding: 4rpx;
+  border-radius: 12rpx;
+  position: relative;
+}
+
+.range-btn {
+  position: relative;
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  color: #666;
+  border-radius: 8rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  flex: 1;
+  text-align: center;
+  min-width: 120rpx;
+}
+
+.range-btn.active {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.time-range::before {
+  content: '';
+  position: absolute;
+  left: 4rpx;
+  top: 4rpx;
+  width: calc(50% - 4rpx);
+  height: calc(100% - 8rpx);
+  background: white;
+  border-radius: 8rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.time-range.week::before {
+  left: calc(50% + 0rpx);
+}
+
+.chart-container {
+  width: 100%;
+  height: 360rpx;
+  position: relative;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 32rpx;
+  text-align: center;
+}
+
+.empty-state image {
+  width: 240rpx;
+  height: 240rpx;
+  margin-bottom: 32rpx;
+}
+
+.empty-state text {
+  font-size: 30rpx;
+  color: #8c8c8c;
+  margin-bottom: 40rpx;
+}
+
+.add-device-btn {
+  background-color: #1890ff !important;
+  color: white !important;
+  padding: 20rpx 48rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  box-shadow: 0 4rpx 16rpx rgba(24, 144, 255, 0.2);
+  border: none;
+}
+
+.add-device-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(24, 144, 255, 0.1);
+}
+
+.add-device-btn::after {
+  display: none;
+}
+
+/* 开关状态 */
+/*.switch-status.on {
+  background-color: rgba(26, 173, 25, 0.1);
+  color: #1aad19;
+}
+
+.switch-status.off {
+  background-color: rgba(153, 153, 153, 0.1);
+  color: #999999;
+}
+*/
+
+.switch-wrap {
+  width: 80rpx;
+  height: 40rpx;
+  margin: 10rpx 0;
+}
+
+.switch-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.switch-track.on {
+  background-color: #1aad19;
+}
+
+.switch-track.off {
+  background-color: #e0e0e0;
+}
+
+.switch-thumb {
+  position: absolute;
+  width: 32rpx;
+  height: 32rpx;
+  top: 4rpx;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+}
+
+.switch-track.on .switch-thumb {
+  transform: translateX(44rpx);
+}
+
+.switch-track.off .switch-thumb {
+  transform: translateX(4rpx);
+}
+
+/* 设备类型配色 */
+.device-card[data-type="temperature"] .card-icon-wrapper {
+  background: rgba(24, 144, 255, 0.1);
+}
+
+.device-card[data-type="temperature"] .value {
+  color: #1890ff;
+}
+
+.device-card[data-type="humidity"] .card-icon-wrapper {
+  background: rgba(82, 196, 26, 0.1);
+}
+
+.device-card[data-type="humidity"] .value {
+  color: #52c41a;
+}
+
+.device-card[data-type="switch"] .card-icon-wrapper {
+  background: rgba(250, 173, 20, 0.1);
+}
+
+.device-card[data-type="switch"] .switch-status text {
+  color: #faad14;
+}
+
+/* 特殊按钮 */
+.config-btn {
+  background-color: #1890ff !important;  /* 配置按钮使用蓝色 */
+  width: 140rpx !important;
+}
+
+.device-btn {
+  background-color: #52c41a !important;  /* 设备按钮使用绿色 */
+  width: 140rpx !important;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.switch-status {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 4rpx 0;
+}
+
+.led-icon {
+  width: 56rpx;
+  height: 56rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.switch-status text {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 8rpx 12rpx;
+  border-radius: 8rpx;
+  background: rgba(24, 144, 255, 0.05);
+  border: 1px solid transparent;
+}
+
+.switch-status text:active {
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+  border-color: rgba(24, 144, 255, 0.2);
+  transform: scale(0.95);
+}
+
+/* 卡片悬停效果 */
+.device-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.quality-text {
+  font-size: 11px;
+  border-radius: 5px;
+  margin: 5px -5px 0px 5px;
+  padding: 0px 5px 5px 5px;
+  font-weight: 500;
+  display: flex;          /* 必须声明为 flex 容器 */
+  align-items: center;    /* 垂直居中 */
+  justify-content: center;/* 水平居中 */
+  height: auto;           /* 容器总高度 */
+  width: 20px;
+  line-height: 0.6;         /* 消除字体默认行高影响 */
+  box-sizing: border-box; /* 确保尺寸计算包含 padding */
+}
+
+.quality-good {
+  color: #52c41a;
+  background-color: rgba(82, 196, 26, 0.1);
+  border: 0.5px solid rgba(82, 196, 26, 0.2);
+}
+
+.quality-medium {
+  color: #1890ff;
+  background-color: rgba(24, 144, 255, 0.1);
+  border: 0.5px solid rgba(24, 144, 255, 0.2);
+}
+
+.quality-bad {
+  color: #fa8c16;
+  background-color: rgba(250, 140, 22, 0.1);
+  border: 0.5px solid rgba(250, 140, 22, 0.2);
+}
+.wufeng {
+  color: #1890ff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 0.1);
+  border: 0.5px solid rgba(24, 144, 255, 0.2);
+}
+.ruanfeng {
+  color: #1890ff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 0.15);
+  border: 0.5px solid rgba(24, 144, 255, 0.25);
+}
+.qingfeng {
+  color: #1890ff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 0.2);
+  border: 0.5px solid rgba(24, 144, 255, 0.3);
+}
+.weifeng {
+  color: #1890ff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 0.25);
+  border: 0.5px solid rgba(24, 144, 255, 0.35);
+}
+.hefeng {
+  color: #1890ff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 0.3);
+  border: 0.5px solid rgba(24, 144, 255, 0.4);
+}
+.qingjingfeng {
+  color: #1890ff;
+  width: 45px;
+  background-color: rgba(24, 144, 255, 0.35);
+  border: 0.5px solid rgba(24, 144, 255, 0.45);
+}
+.qiangfeng {
+  color: #fff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 0.5);
+  border: 0.5px solid rgba(24, 144, 255, 0.5);
+}
+.jifeng {
+  color: #fff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 0.6);
+  border: 0.5px solid rgba(24, 144, 255, 0.6);
+}
+.dafeng {
+  color: #fff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 0.7);
+  border: 0.5px solid rgba(24, 144, 255, 0.7);
+}
+.liefeng {
+  color: #fff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 0.8);
+  border: 0.5px solid rgba(24, 144, 255, 0.8);
+}
+.kuangfeng {
+  color: #fff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 0.9);
+  border: 0.5px solid rgba(24, 144, 255, 0.9);
+}
+.baofeng {
+  color: #fff;
+  width: 35px;
+  background-color: rgba(24, 144, 255, 1);
+  border: 0.5px solid rgba(24, 144, 255, 1);
+}
+
+/* LED灯带弹窗样式 */
+.led-dialog-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 9999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  touch-action: none;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.led-dialog {
+  width: 90%;
+  max-width: 400px;
+  background-color: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 10000000;
+  position: relative;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-overflow-scrolling: touch;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.led-dialog-header,
+.led-dialog-content,
+.led-dialog-footer {
+  position: relative;
+  z-index: 10000001;
+  background-color: #fff;
+  touch-action: none;
+  overflow: hidden;
+}
+
+.led-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fff;
+}
+
+.led-dialog-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+}
+
+.led-dialog-content {
+  padding: 24px;
+  touch-action: none;
+  -webkit-overflow-scrolling: touch;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.brightness-control {
+  margin-bottom: 24px;
+}
+
+.control-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.control-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.brightness-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brightness-slider {
+  flex: 1;
+}
+
+.brightness-value {
+  font-size: 14px;
+  color: #666;
+  min-width: 40px;
+  text-align: right;
+}
+
+.color-control {
+  margin-bottom: 24px;
+}
+
+.color-wheel-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  touch-action: none;
+  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+}
+
+.color-wheel {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+ 
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
+  position: relative;
+  z-index: 10000002;
+}
+
+.color-preview {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 2px solid #e8e8e8;
+}
+
+.quick-colors {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.quick-color-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #e8e8e8;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.quick-color-btn:active {
+  transform: scale(0.9);
+}
+
+.led-dialog-footer {
+  display: flex;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid #f0f0f0;
+  background-color: #fff;
+}
+
+.cancel-btn {
+  flex: 1;
+  height: 40px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #666;
+  font-size: 14px;
+}
+
+.confirm-btn {
+  flex: 1;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background-color: #1890ff;
+  color: #fff;
+  font-size: 14px;
+}
+
+/* 更多按钮样式 */
+/* 更多按钮样式优化 */
+.more-btn {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx 24rpx;
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.08), rgba(24, 144, 255, 0.12));
+  border-radius: 16rpx;
+  font-size: 26rpx;
+  color: #1890ff;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(24, 144, 255, 0.15);
+  backdrop-filter: blur(10rpx);
+  -webkit-backdrop-filter: blur(10rpx);
+  box-shadow: 0 2rpx 8rpx rgba(24, 144, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.more-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.more-btn:active::before {
+  left: 100%;
+}
+
+.more-btn:active {
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.15), rgba(24, 144, 255, 0.2));
+  transform: scale(0.96);
+  box-shadow: 0 1rpx 4rpx rgba(24, 144, 255, 0.15);
+  border-color: rgba(24, 144, 255, 0.25);
+}
+
+.more-btn image {
+  width: 32rpx;
+  height: 32rpx;
+  transition: transform 0.3s ease;
+}
+
+.more-btn:active image {
+  transform: scale(1.1);
+}
+
+.more-arrow {
+  font-size: 12px;
+  color: #1890ff;
+  font-weight: 600;
+  transition: transform 0.3s ease;
+  margin-left: 4rpx;
+}
+
+.more-btn:active .more-arrow {
+  transform: translateX(4rpx);
+}
+
+/* 灯带设备卡片中的更多按钮特殊样式 */
+.device-card[data-type="led"] .more-btn {
+  background: linear-gradient(135deg, rgba(255, 64, 129, 0.08), rgba(255, 64, 129, 0.12));
+  color: #ff4081;
+  border-color: rgba(255, 64, 129, 0.15);
+  box-shadow: 0 2rpx 8rpx rgba(255, 64, 129, 0.1);
+}
+
+.device-card[data-type="led"] .more-btn:active {
+  background: linear-gradient(135deg, rgba(255, 64, 129, 0.15), rgba(255, 64, 129, 0.2));
+  box-shadow: 0 1rpx 4rpx rgba(255, 64, 129, 0.15);
+  border-color: rgba(255, 64, 129, 0.25);
+}
+
+.device-card[data-type="led"] .more-arrow {
+  color: #ff4081;
+}
+
+/* 开关设备卡片中的更多按钮特殊样式 */
+.device-card[data-type="switch"] .more-btn {
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.08), rgba(250, 173, 20, 0.12));
+  color: #faad14;
+  border-color: rgba(250, 173, 20, 0.15);
+  box-shadow: 0 2rpx 8rpx rgba(250, 173, 20, 0.1);
+}
+
+.device-card[data-type="switch"] .more-btn:active {
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.15), rgba(250, 173, 20, 0.2));
+  box-shadow: 0 1rpx 4rpx rgba(250, 173, 20, 0.15);
+  border-color: rgba(250, 173, 20, 0.25);
+}
+
+.device-card[data-type="switch"] .more-arrow {
+  color: #faad14;
+}
+
+/* 传感器设备卡片中的更多按钮样式 */
+.device-card[data-type="temperature"] .more-btn,
+.device-card[data-type="humidity"] .more-btn,
+.device-card[data-type="waterquality"] .more-btn,
+.device-card[data-type="turang"] .more-btn,
+.device-card[data-type="fengsu"] .more-btn {
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.08), rgba(24, 144, 255, 0.12));
+  color: #1890ff;
+  border-color: rgba(24, 144, 255, 0.15);
+  box-shadow: 0 2rpx 8rpx rgba(24, 144, 255, 0.1);
+}
+
+.device-card[data-type="temperature"] .more-btn:active,
+.device-card[data-type="humidity"] .more-btn:active,
+.device-card[data-type="waterquality"] .more-btn:active,
+.device-card[data-type="turang"] .more-btn:active,
+.device-card[data-type="fengsu"] .more-btn:active {
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.15), rgba(24, 144, 255, 0.2));
+  box-shadow: 0 1rpx 4rpx rgba(24, 144, 255, 0.15);
+  border-color: rgba(24, 144, 255, 0.25);
+}
+
+.device-card[data-type="temperature"] .more-arrow,
+.device-card[data-type="humidity"] .more-arrow,
+.device-card[data-type="waterquality"] .more-arrow,
+.device-card[data-type="turang"] .more-arrow,
+.device-card[data-type="fengsu"] .more-arrow {
+  color: #1890ff;
+}
+
+/* LED更多按钮样式 */
+.led-more {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 24rpx;
+  border-radius: 16rpx;
+  font-size: 26rpx;
+  color: #ff4081;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10rpx);
+  -webkit-backdrop-filter: blur(10rpx);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+}
+
+/* LED控制行布局 */
+.led-control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.led-status {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.led-status text {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 8rpx 12rpx;
+  border-radius: 8rpx;
+  background: rgba(24, 144, 255, 0.05);
+  border: 1px solid transparent;
+}
+
+.led-status text:active {
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+  border-color: rgba(24, 144, 255, 0.2);
+  transform: scale(0.95);
+}
+
+.led-more::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.led-more:active::before {
+  left: 100%;
+}
+
+.led-more:active {
+  background: linear-gradient(135deg, rgba(255, 64, 129, 0.15), rgba(255, 64, 129, 0.2));
+  transform: scale(0.96);
+  box-shadow: 0 1rpx 4rpx rgba(255, 64, 129, 0.15);
+  border-color: rgba(255, 64, 129, 0.25);
+}
+
+.led-more image {
+  width: 32rpx;
+  height: 32rpx;
+  transition: transform 0.3s ease;
+}
+
+.led-more:active image {
+  transform: scale(1.1);
+}
+
+/* 电机控制相关样式 */
+.motor-control-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.motor-status {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.motor-status text {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 8rpx 12rpx;
+  border-radius: 8rpx;
+  background: rgba(24, 144, 255, 0.05);
+  border: 1px solid transparent;
+}
+
+.motor-status text:active {
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+  border-color: rgba(24, 144, 255, 0.2);
+  transform: scale(0.95);
+}
+
+.motor-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.motor-more {
+  color: #1890ff;
+  font-size: 26rpx;
+  padding: 8rpx 16rpx;
+}
+
+/* 电机控制弹窗样式 */
+.motor-dialog-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+}
+
+.motor-dialog {
+  background: white;
+  border-radius: 24rpx;
+  width: 100%;
+  max-width: 700rpx;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.2);
+}
+
+.motor-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 40rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.motor-dialog-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.motor-dialog-content {
+  padding: 30rpx;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* 快捷控制按钮 */
+.quick-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+  max-width: 500rpx;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.quick-btn {
+  width: 180rpx; 
+  max-width: 256rpx; 
+  padding: 16rpx 8rpx;
+  border-radius: 12rpx;
+  border: none;
+  font-size: 22rpx;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  min-height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  word-break: break-all;
+}
+
+.quick-btn::after {
+  display: none;
+}
+
+.quick-btn.forward-5s {
+  background: linear-gradient(135deg, #52c41a, #73d13d);
+}
+
+.quick-btn.reverse-5s {
+  background: linear-gradient(135deg, #1890ff, #40a9ff);
+}
+
+.quick-btn.forward-continuous {
+  background: linear-gradient(135deg, #fa8c16, #ffa940);
+}
+
+.quick-btn.reverse-continuous {
+  background: linear-gradient(135deg, #f5222d, #ff4d4f);
+}
+
+.btn-text {
+  display: block;
+  font-size: 22rpx;
+  font-weight: 500;
+  line-height: 1.2;
+  word-break: break-all;
+}
+
+/* 自定义控制 */
+.custom-control {
+  margin-bottom: 40rpx;
+}
+
+.control-card {
+  background: #f8f9fa;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.card-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.card-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.card-subtitle {
+  font-size: 24rpx;
+  color: #666;
+  margin-left: auto;
+}
+
+.picker-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  background: white;
+  border-radius: 12rpx;
+  border: 1rpx solid #e8e8e8;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.picker-arrow {
+  color: #999;
+  font-size: 20rpx;
+}
+
+.duration-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32rpx;
+}
+
+.duration-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border: 2rpx solid #1890ff;
+  background: white;
+  color: #1890ff;
+  font-size: 32rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.duration-btn::after {
+  display: none;
+}
+
+.duration-btn:active {
+  background: #1890ff;
+  color: white;
+}
+
+.duration-value {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  min-width: 60rpx;
+  text-align: center;
+}
+
+/* 主要控制按钮 */
+.main-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+}
+
+.main-btn {
+  padding: 24rpx 16rpx;
+  border-radius: 12rpx;
+  border: none;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.15);
+  min-height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  word-break: break-all;
+}
+
+.main-btn::after {
+  display: none;
+}
+
+.start-btn {
+  max-width: 256rpx; 
+  background: linear-gradient(135deg, #52c41a, #73d13d);
+}
+
+.stop-btn {
+  max-width: 256rpx; 
+  background: linear-gradient(135deg, #f5222d, #ff4d4f);
+}
+
+.main-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
+}

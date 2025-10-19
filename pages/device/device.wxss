@@ -1,0 +1,387 @@
+/* 重置默认样式 */
+page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* 容器优化 */
+.container {
+  padding: 32rpx 24rpx;
+  background: #f8fafc;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+
+/* 头部布局修复 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  margin-bottom: 24rpx;
+  position: sticky;
+  top: 0;
+  background: rgba(248,250,252,0.95);
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.header-btns {
+  display: flex;
+  gap: 24rpx;
+  align-items: center;
+}
+
+/* 按钮组对齐优化 */
+.mqtt-btn {
+  order: 1; /* 确保按钮顺序正确 */
+}
+
+/* 设备列表布局修复 */
+.device-list {
+  display: grid;
+  gap: 24rpx;
+  padding: 0 8rpx;
+}
+
+.device-item {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  display: grid;
+  gap: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.06);
+  border: 1rpx solid #f1f5f9;
+  transition: transform 0.2s ease;
+}
+
+.device-item:active {
+  transform: scale(0.98);
+}
+
+/* 设备信息布局 */
+.device-info {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.device-icon {
+  flex-shrink: 0;
+  width: 96rpx;
+  height: 96rpx;
+  background: #f1f5f9;
+  border-radius: 16rpx;
+  padding: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.device-content {
+  flex: 1;
+  min-width: 0; /* 防止内容溢出 */
+}
+
+/* 文本溢出处理 */
+.device-name {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1e293b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.device-topic {
+  font-size: 26rpx;
+  color: #64748b;
+  font-family: monospace;
+  background: #f8fafc;
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 操作区域布局优化 */
+.device-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24rpx;
+  margin-top: 24rpx;
+  border-top: 1rpx solid #f1f5f9;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16rpx;
+  flex-shrink: 0; /* 防止按钮换行 */
+}
+
+/* 弹窗布局修复 */
+.dialog-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: #fff;
+  width: 85%;
+  max-width: 600rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28rpx 32rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.dialog-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.close-btn {
+  font-size: 40rpx;
+  color: #999;
+  padding: 10rpx;
+}
+
+.dialog-content {
+  padding: 32rpx;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.form-item {
+  margin-bottom: 28rpx;
+}
+
+.form-item:last-child {
+  margin-bottom: 16rpx;
+}
+
+.label {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 12rpx;
+  font-weight: 500;
+}
+
+.input {
+  width: 100%;
+  height: 80rpx;
+  border: 1rpx solid #e8e8e8;
+  border-radius: 8rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2rpx rgba(24, 144, 255, 0.1);
+}
+
+.input::placeholder {
+  color: #999;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 24rpx 32rpx;
+  border-top: 1rpx solid #f0f0f0;
+  gap: 16rpx;
+}
+
+.cancel-btn, .confirm-btn {
+  min-width: 140rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  border-radius: 8rpx;
+  text-align: center;
+  padding: 0 32rpx;
+  border: none;
+}
+
+.cancel-btn {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.confirm-btn {
+  background: #1890ff;
+  color: #fff;
+}
+
+.cancel-btn:active, .confirm-btn:active {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
+.cancel-btn::after, .confirm-btn::after {
+  display: none;
+}
+
+/* 按钮响应式优化 */
+@media (max-width: 480px) {
+  .header-btns {
+    flex-direction: column;
+    width: 100%;
+    gap: 16rpx;
+  }
+  
+  .mqtt-btn, .add-btn {
+    width: 100rpx;
+    display: inline-block; /* 明确展示方式，避免布局干扰 */
+    text-align: center;
+    padding: 16rpx 32rpx;
+    border: none;
+    border-radius: 8rpx;
+    background-color: #007aff;
+    color: white;
+    font-size: 28rpx;
+    font-weight: 600;
+    box-shadow: 0 4rpx 6rpx rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+}
+
+/* 加载过渡效果 */
+.device-list {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8rpx;
+  height: 8rpx;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4rpx;
+}
+
+/* 设备类型选择器样式 */
+.type-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+  padding: 16rpx 0;
+}
+
+.type-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 16rpx;
+  background: #f8fafc;
+  border: 2rpx solid #e8e8e8;
+  border-radius: 12rpx;
+  transition: all 0.3s ease;
+}
+
+.type-option.selected {
+  background: rgba(24, 144, 255, 0.05);
+  border-color: #1890ff;
+}
+
+.type-option image {
+  width: 64rpx;
+  height: 64rpx;
+  margin-bottom: 12rpx;
+}
+
+.type-option text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.type-option.selected text {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+/* 设备类型图标容器样式 */
+.type-icon-wrapper {
+  width: 96rpx;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16rpx;
+  border-radius: 16rpx;
+  background: rgba(24, 144, 255, 0.1);
+}
+
+/* 编辑和删除按钮样式 */
+.edit-btn, .delete-btn {
+  max-width: 200rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  border-radius: 8rpx;
+  text-align: center;
+  padding: 0 24rpx;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.edit-btn {
+  background: #1890ff;
+  color: #fff;
+}
+
+.edit-btn:active {
+  background: #1677ff;
+  transform: scale(0.98);
+}
+
+.delete-btn {
+  background: #ff4d4f;
+  color: #fff;
+}
+
+.delete-btn:active {
+  background: #ff7875;
+  transform: scale(0.98);
+}
+
+.edit-btn::after, .delete-btn::after {
+  display: none;
+}

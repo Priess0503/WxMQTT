@@ -1,11 +1,15 @@
+<<<<<<< HEAD
 const api = require('../../utils/api');
 
+=======
+>>>>>>> a83a60444d083c894cf8433ba6f0219844e197de
 Page({
   data: {
     config: {
       host: '',
       username: '',
       password: ''
+<<<<<<< HEAD
     },
     wxId: null
   },
@@ -16,6 +20,12 @@ Page({
     const wxId = app.getWxId();
     this.setData({ wxId });
 
+=======
+    }
+  },
+
+  onLoad() {
+>>>>>>> a83a60444d083c894cf8433ba6f0219844e197de
     // 加载已保存的配置
     const mqttConfig = wx.getStorageSync('mqttConfig') || {};
     this.setData({
@@ -47,8 +57,13 @@ Page({
   },
 
   // 保存配置
+<<<<<<< HEAD
   async saveConfig() {
     const { config, wxId } = this.data;
+=======
+  saveConfig() {
+    const { config } = this.data;
+>>>>>>> a83a60444d083c894cf8433ba6f0219844e197de
     
     // 验证配置
     if (!config.host) {
@@ -59,6 +74,7 @@ Page({
       return;
     }
 
+<<<<<<< HEAD
     // 显示加载提示
     wx.showLoading({
       title: '保存中...',
@@ -106,5 +122,19 @@ Page({
         wx.navigateBack();
       }, 1500);
     }
+=======
+    // 保存配置
+    wx.setStorageSync('mqttConfig', config);
+    
+    wx.showToast({
+      title: '配置已保存',
+      icon: 'success'
+    });
+
+    // 返回上一页
+    setTimeout(() => {
+      wx.navigateBack();
+    }, 1500);
+>>>>>>> a83a60444d083c894cf8433ba6f0219844e197de
   }
 }); 

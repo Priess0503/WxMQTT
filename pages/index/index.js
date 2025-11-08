@@ -303,8 +303,13 @@ Page({
             client.on('message', (topic, message) => {
                 try {
                     console.log('收到消息，主题:', topic);
+                    
+                    // 清理消息字符串中的空白字符
+                    const messageStr = message.toString().trim();
+                    console.log('原始消息:', messageStr);
+                    
                     // 直接解析JSON字符串
-                    const data = JSON.parse(message.toString());
+                    const data = JSON.parse(messageStr);
                     console.log('解析后的数据:', data);
 
                     // 验证数据格式
@@ -313,9 +318,15 @@ Page({
                         return;
                     }
 
-                    // 检查必要的字段
-                    if (data.temp === undefined && data.TR === undefined && data.FS === undefined && data.humi === undefined && data.TDS === undefined) {
-                        console.error('缺少必要的数据字段:', data);
+                    // 检查是否是传感器数据（开关、LED、电机等控制设备的消息可以忽略）
+                    const hasSensorData = data.temp !== undefined || 
+                                         data.TR !== undefined || 
+                                         data.FS !== undefined || 
+                                         data.humi !== undefined || 
+                                         data.TDS !== undefined;
+                    
+                    if (!hasSensorData) {
+                        console.log('收到非传感器数据，忽略:', data);
                         return;
                     }
 
@@ -370,7 +381,9 @@ Page({
                     });
                 } catch (error) {
                     console.error('解析消息失败:', error);
-                    console.log('原始消息:', message.toString());
+                    console.error('错误详情:', error.message);
+                    console.log('原始消息字节:', Array.from(message));
+                    console.log('原始消息文本:', message.toString());
                 }
             });
 

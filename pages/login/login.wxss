@@ -1,0 +1,124 @@
+/* 微信登录页面样式 */
+
+.login-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+  box-sizing: border-box;
+}
+
+.login-content {
+  width: 100%;
+  max-width: 600rpx;
+  background: #ffffff;
+  border-radius: 40rpx;
+  padding: 60rpx 40rpx;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.2);
+}
+
+/* Logo区域 */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 60rpx;
+}
+
+.logo {
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 30rpx;
+}
+
+.app-name {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.app-desc {
+  font-size: 28rpx;
+  color: #999;
+  text-align: center;
+  line-height: 40rpx;
+}
+
+/* 功能介绍 */
+.feature-section {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 60rpx;
+  padding: 0 20rpx;
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.feature-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.feature-text {
+  font-size: 24rpx;
+  color: #666;
+  text-align: center;
+}
+
+/* 登录区域 */
+.login-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-btn {
+  width: 100%;
+  height: 90rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: bold;
+  border-radius: 45rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10rpx 30rpx rgba(102, 126, 234, 0.4);
+  transition: all 0.3s;
+}
+
+.login-btn:active {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
+.login-btn[disabled] {
+  opacity: 0.6;
+}
+
+.login-tips {
+  display: flex;
+  align-items: center;
+  margin-top: 40rpx;
+  font-size: 24rpx;
+}
+
+.tips-text {
+  color: #999;
+}
+
+.tips-link {
+  color: #667eea;
+  margin: 0 8rpx;
+}
+

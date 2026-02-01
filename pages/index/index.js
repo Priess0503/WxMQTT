@@ -49,10 +49,31 @@ Page({
             { text: '正转', value: 'forward' },
             { text: '反转', value: 'reverse' }
         ],
-        motorDuration: 5 // 运行时间（秒）
+        motorDuration: 5, // 运行时间（秒）
+        // 小车控制相关数据
+        showCarDialog: false,
+        currentCarDevice: null,
+        steeringAngle: 0, // 方向盘角度，-60到60
+        steeringFx: 0, // 方向盘fx值
+        currentGear: 'P', // 当前挡位：D(前进)、R(后退)、P(停车)
+        currentCarValue: 0, // 当前car值：1(前进)、-1(后退)、0(停车)
+        // 车灯控制相关数据
+        leftLight: 0, // 左转灯：0(关)、1(开)
+        rightLight: 0, // 右转灯：0(关)、1(开)
+        headLight: 0, // 车灯：0(关)、1(开)
+        sosLight: 0, // 双闪灯：0(关)、1(开)
+        // 登录状态
+        isLoggedIn: false,
+        // 隐私政策弹窗
+        showPrivacyDialog: false,
+        agreePrivacy: false,
+        loading: false
     },
 
     onLoad() {
+        // 检查登录状态
+        this.checkLoginStatus();
+        
         // 从本地存储加载设备配置和历史数据
         const devices = wx.getStorageSync('devices') || [];
         const historyData = wx.getStorageSync('historyData') || {};
@@ -60,7 +81,7 @@ Page({
         // 初始化设备数据，确保开关、LED和电机设备有默认状态
         const deviceData = wx.getStorageSync('deviceData') || {};
         devices.forEach(device => {
-            if (device.type === 'switch' || device.type === 'led' || device.type === 'motor') {
+            if (device.type === 'switch' || device.type === 'led' || device.type === 'motor' || device.type === 'car') {
                 // 从本地存储加载开关状态，默认为关闭
                 const savedState = wx.getStorageSync(`device_state_${device.id}`);
                 deviceData[device.id] = savedState !== undefined ? savedState : false;
@@ -102,6 +123,79 @@ Page({
 
         // 定期清理过期数据
         this.cleanExpiredData();
+    },
+    
+    /**
+     * 检查登录状态
+     */
+    checkLoginStatus() {
+        const wxId = wx.getStorageSync('wxId');
+        const isLoggedIn = !!wxId;
+        this.setData({ isLoggedIn });
+        console.log('登录状态检查:', isLoggedIn);
+    },
+    
+    /**
+     * 跳转到登录页面
+     */
+    toLogin() {
+        wx.navigateTo({
+            url: '/pages/login/login'
+        });
+    },
+    
+    /**
+     * 同步设备
+     */
+    syncDevices() {
+        const isLoggedIn = this.data.isLoggedIn;
+        if (isLoggedIn) {
+            // 已登录，直接同步设备
+            this.doSyncDevices();
+        } else {
+            // 未登录，显示隐私政策弹窗
+            this.setData({ showPrivacyDialog: true, agreePrivacy: false });
+        }
+    },
+    
+    /**
+     * 执行设备同步
+     */
+    async doSyncDevices() {
+        const wxId = wx.getStorageSync('wxId');
+        if (!wxId) {
+            wx.showToast({
+                title: '请先登录',
+                icon: 'none'
+            });
+            return;
+        }
+        
+        wx.showLoading({
+            title: '同步设备中...'
+        });
+        
+        try {
+            // 调用API同步设备
+            console.log('开始同步设备，wxId:', wxId);
+            await this.syncDevicesFromServer(wxId);
+            
+            wx.hideLoading();
+            wx.showToast({
+                title: '设备同步成功',
+                icon: 'success'
+            });
+            
+            // 重新加载设备列表
+            this.onShow();
+        } catch (error) {
+            wx.hideLoading();
+            wx.showToast({
+                title: '同步失败，请重试',
+                icon: 'none'
+            });
+            console.error('同步设备失败:', error);
+        }
     },
 
     // 清理过期数据
@@ -152,6 +246,13 @@ Page({
         }
         
         console.log('选中的设备:', selectedDevice);
+        
+        // 对于小车设备，直接打开控制窗口
+        if (selectedDevice.type === 'car') {
+            console.log('小车设备，直接打开控制窗口');
+            this.showCarControl({ currentTarget: { dataset: { id } } });
+            return;
+        }
         
         // 判断设备类型，决定是否显示折线图
         const sensorTypes = ['temperature', 'humidity', 'waterquality', 'turang', 'fengsu'];
@@ -303,8 +404,13 @@ Page({
             client.on('message', (topic, message) => {
                 try {
                     console.log('收到消息，主题:', topic);
+                    
+                    // 清理消息字符串中的空白字符
+                    const messageStr = message.toString().trim();
+                    console.log('原始消息:', messageStr);
+                    
                     // 直接解析JSON字符串
-                    const data = JSON.parse(message.toString());
+                    const data = JSON.parse(messageStr);
                     console.log('解析后的数据:', data);
 
                     // 验证数据格式
@@ -313,9 +419,15 @@ Page({
                         return;
                     }
 
-                    // 检查必要的字段
-                    if (data.temp === undefined && data.TR === undefined && data.FS === undefined && data.humi === undefined && data.TDS === undefined) {
-                        console.error('缺少必要的数据字段:', data);
+                    // 检查是否是传感器数据（开关、LED、电机等控制设备的消息可以忽略）
+                    const hasSensorData = data.temp !== undefined || 
+                                         data.TR !== undefined || 
+                                         data.FS !== undefined || 
+                                         data.humi !== undefined || 
+                                         data.TDS !== undefined;
+                    
+                    if (!hasSensorData) {
+                        console.log('收到非传感器数据，忽略:', data);
                         return;
                     }
 
@@ -370,7 +482,9 @@ Page({
                     });
                 } catch (error) {
                     console.error('解析消息失败:', error);
-                    console.log('原始消息:', message.toString());
+                    console.error('错误详情:', error.message);
+                    console.log('原始消息字节:', Array.from(message));
+                    console.log('原始消息文本:', message.toString());
                 }
             });
 
@@ -708,9 +822,9 @@ Page({
         console.log('从本地存储加载的设备列表:', devices);
         console.log('从本地存储加载的设备数据:', deviceData);
         
-        // 初始化设备数据，确保开关、LED和电机设备有默认状态
+        // 初始化设备数据，确保开关、LED、电机和小车设备有默认状态
         devices.forEach(device => {
-            if (device.type === 'switch' || device.type === 'led' || device.type === 'motor') {
+            if (device.type === 'switch' || device.type === 'led' || device.type === 'motor' || device.type === 'car') {
                 // 从本地存储加载开关状态，默认为关闭
                 const savedState = wx.getStorageSync(`device_state_${device.id}`);
                 deviceData[device.id] = savedState !== undefined ? savedState : false;
@@ -1314,6 +1428,279 @@ Page({
         }, 100);
     },
 
+    /**
+     * 显示隐私政策弹窗
+     */
+    showPrivacyDialog() {
+        this.setData({ showPrivacyDialog: true, agreePrivacy: false });
+        console.log('显示隐私政策弹窗');
+    },
+    
+    /**
+     * 关闭隐私政策弹窗
+     */
+    closePrivacyDialog() {
+        this.setData({ showPrivacyDialog: false, agreePrivacy: false });
+        console.log('关闭隐私政策弹窗');
+    },
+    
+    /**
+     * 切换同意状态
+     */
+    toggleAgree() {
+        const agreePrivacy = !this.data.agreePrivacy;
+        this.setData({ agreePrivacy });
+        console.log('切换同意状态:', agreePrivacy);
+    },
+    
+    /**
+     * 确认同意并继续登录
+     */
+    confirmPrivacy() {
+        if (this.data.agreePrivacy) {
+            this.setData({ showPrivacyDialog: false });
+            this.getUserProfile();
+            console.log('用户同意隐私政策，开始登录流程');
+        } else {
+            wx.showToast({
+                title: '请先阅读并同意隐私政策',
+                icon: 'none'
+            });
+        }
+    },
+    
+    /**
+     * 获取用户信息并登录
+     */
+    getUserProfile() {
+        const that = this;
+        
+        // 显示加载提示
+        this.setData({ loading: true });
+        
+        // 获取用户信息
+        wx.getUserProfile({
+            desc: '用于完善用户资料',
+            success: (res) => {
+                console.log('获取用户信息成功:', res.userInfo);
+                
+                const userInfo = res.userInfo;
+                
+                // 调用微信登录接口获取code
+                that.wxLogin(userInfo);
+            },
+            fail: (err) => {
+                console.error('获取用户信息失败:', err);
+                that.setData({ loading: false });
+                wx.showToast({
+                    title: '获取用户信息失败',
+                    icon: 'none'
+                });
+            }
+        });
+    },
+    
+    /**
+     * 微信登录 - 自动适配开发/生产环境
+     */
+    wxLogin(userInfo) {
+        const that = this;
+        
+        wx.login({
+            success: (res) => {
+                if (res.code) {
+                    console.log('微信登录成功,code:', res.code);
+                    
+                    // 根据配置判断使用真实登录还是测试登录
+                    const config = require('../../utils/config');
+                    if (config.useRealWxLogin()) {
+                        // 生产环境：使用真实微信登录
+                        console.log('=== 生产环境：真实微信登录 ===');
+                        that.getOpenIdFromServer(res.code, userInfo);
+                    } else {
+                        // 开发环境：使用模拟登录
+                        console.log('=== 开发环境：模拟登录 ===');
+                        const mockWxId = config.getMockWxId();
+                        console.log('使用模拟wxId:', mockWxId);
+                        that.loginToServer(mockWxId, userInfo);
+                    }
+                } else {
+                    console.error('微信登录失败:', res.errMsg);
+                    that.setData({ loading: false });
+                    wx.showToast({
+                        title: '微信登录失败',
+                        icon: 'none'
+                    });
+                }
+            },
+            fail: (err) => {
+                console.error('微信登录失败:', err);
+                that.setData({ loading: false });
+                wx.showToast({
+                    title: '微信登录失败',
+                    icon: 'none'
+                });
+            }
+        });
+    },
+    
+    /**
+     * 从后端获取openid（生产环境）
+     */
+    async getOpenIdFromServer(code, userInfo) {
+        const that = this;
+        const api = require('../../utils/api');
+        
+        try {
+            console.log('正在从后端获取openid...');
+            
+            // 调用后端接口，用code换取openid
+            const result = await api.wxLoginWithCode(code, userInfo.nickName, userInfo.avatarUrl);
+            
+            console.log('后端返回结果:', result);
+            
+            if (result.success && result.data) {
+                const wxId = result.data.wxId;
+                console.log('获取到真实wxId:', wxId);
+                
+                // 保存到本地
+                wx.setStorageSync('wxId', wxId);
+                wx.setStorageSync('userInfo', userInfo);
+                
+                // 同步MQTT配置和设备数据
+                if (!result.isNewUser && result.data.mqttConfig) {
+                    const mqttConfig = result.data.mqttConfig;
+                    console.log('准备同步MQTT配置:', mqttConfig);
+                    
+                    if (mqttConfig.host) {
+                        wx.setStorageSync('mqttConfig', mqttConfig);
+                        console.log('✅ MQTT配置已同步到本地');
+                    }
+                    
+                    console.log('开始同步设备列表...');
+                    await that.syncDevicesFromServer(wxId);
+                }
+                
+                that.setData({ loading: false, isLoggedIn: true });
+                
+                wx.showToast({
+                    title: result.isNewUser ? '注册成功' : '登录成功',
+                    icon: 'success',
+                    duration: 1500
+                });
+                
+                // 同步设备
+                that.doSyncDevices();
+            } else {
+                throw new Error(result.error || '获取openid失败');
+            }
+        } catch (error) {
+            console.error('获取openid失败:', error);
+            that.setData({ loading: false });
+            wx.showToast({
+                title: '登录失败: ' + error.message,
+                icon: 'none',
+                duration: 2000
+            });
+        }
+    },
+    
+    /**
+     * 调用后端登录接口
+     */
+    async loginToServer(wxId, userInfo) {
+        const that = this;
+        const api = require('../../utils/api');
+        
+        try {
+            // 调用后端登录接口
+            const result = await api.wxLogin(
+                wxId,
+                userInfo.nickName,
+                userInfo.avatarUrl
+            );
+            
+            console.log('后端登录结果:', result);
+            console.log('是否新用户:', result.isNewUser);
+            console.log('MQTT配置:', result.data.mqttConfig);
+            
+            if (result.success) {
+                // 保存微信ID到本地
+                wx.setStorageSync('wxId', wxId);
+                wx.setStorageSync('userInfo', userInfo);
+                
+                // 如果不是新用户,同步MQTT配置和设备数据
+                if (!result.isNewUser && result.data.mqttConfig) {
+                    const mqttConfig = result.data.mqttConfig;
+                    console.log('准备同步MQTT配置:', mqttConfig);
+                    
+                    // 同步MQTT配置
+                    if (mqttConfig.host) {
+                        wx.setStorageSync('mqttConfig', mqttConfig);
+                        console.log('✅ MQTT配置已同步到本地');
+                    } else {
+                        console.log('⚠️ MQTT配置中没有host');
+                    }
+                    
+                    // 同步设备列表
+                    console.log('开始同步设备列表...');
+                    that.syncDevicesFromServer(wxId);
+                } else {
+                    console.log('跳过数据同步，原因:', {
+                        isNewUser: result.isNewUser,
+                        hasMqttConfig: !!result.data.mqttConfig
+                    });
+                }
+                
+                that.setData({ loading: false, isLoggedIn: true });
+                
+                // 登录成功提示
+                wx.showToast({
+                    title: result.isNewUser ? '注册成功' : '登录成功',
+                    icon: 'success',
+                    duration: 1500
+                });
+                
+                // 同步设备
+                that.doSyncDevices();
+            } else {
+                throw new Error(result.error || '登录失败');
+            }
+        } catch (error) {
+            console.error('登录失败:', error);
+            that.setData({ loading: false });
+            wx.showToast({
+                title: '登录失败: ' + error.message,
+                icon: 'none',
+                duration: 2000
+            });
+        }
+    },
+    
+    /**
+     * 从服务器同步设备列表
+     */
+    async syncDevicesFromServer(wxId) {
+        const api = require('../../utils/api');
+        try {
+            console.log('正在从服务器获取设备列表, wxId:', wxId);
+            const result = await api.getDevices(wxId);
+            
+            console.log('服务器返回的设备数据:', result);
+            
+            if (result.success && result.data) {
+                // 保存设备列表到本地
+                wx.setStorageSync('devices', result.data);
+                console.log('✅ 设备列表已同步到本地:', result.data.length, '个设备');
+                console.log('设备详情:', result.data);
+            } else {
+                console.log('⚠️ 获取设备列表失败或无设备:', result);
+            }
+        } catch (error) {
+            console.error('❌ 同步设备列表失败:', error);
+        }
+    },
+
     stopPropagation() {
         // 阻止事件冒泡
     },
@@ -1794,6 +2181,297 @@ Page({
                 duration: 0
             });
         }, 100);
+    },
+
+    // 显示小车控制弹窗
+    showCarControl(e) {
+        const { id } = e.currentTarget.dataset;
+        const device = this.data.devices.find(d => d.id === id);
+        if (!device) return;
+
+        // 播放音效
+        this.playSoundEffect();
+
+        this.setData({
+            showCarDialog: true,
+            currentCarDevice: device,
+            showChart: false, // 隐藏图表
+            steeringAngle: 0,
+            steeringFx: 0,
+            currentGear: 'P',
+            currentCarValue: 0,
+            // 初始化车灯状态
+            leftLight: 0,
+            rightLight: 0,
+            headLight: 0,
+            sosLight: 0
+        });
+    },
+
+    // 关闭小车控制弹窗
+    closeCarDialog() {
+        // 根据当前选中的设备类型决定是否显示图表
+        const { selectedDevice } = this.data;
+        const sensorTypes = ['temperature', 'humidity', 'waterquality', 'turang', 'fengsu'];
+        const isSensorDevice = selectedDevice ? sensorTypes.includes(selectedDevice.type) : false;
+        const shouldShowChart = isSensorDevice;
+        
+        this.setData({
+            showCarDialog: false,
+            currentCarDevice: null,
+            showChart: shouldShowChart // 根据设备类型决定是否显示折线图
+        });
+        
+        // 恢复页面滚动
+        setTimeout(() => {
+            wx.pageScrollTo({
+                scrollTop: 0,
+                duration: 0
+            });
+        }, 100);
+    },
+
+    // 方向盘触摸开始
+    onSteeringTouchStart(e) {
+        const query = wx.createSelectorQuery();
+        query.select('#steeringWrapper').boundingClientRect();
+        query.exec((res) => {
+            if (res && res[0]) {
+                const rect = res[0];
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const currentX = e.touches[0].clientX;
+                const currentY = e.touches[0].clientY;
+                this.setData({
+                    steeringCenterX: centerX,
+                    steeringCenterY: centerY,
+                    lastTouchX: currentX,
+                    lastTouchY: currentY
+                });
+            }
+        });
+    },
+
+    // 方向盘触摸移动
+    onSteeringTouchMove(e) {
+        const { steeringCenterX, steeringCenterY, lastTouchX, lastTouchY } = this.data;
+        if (!steeringCenterX || !steeringCenterY || lastTouchX === undefined || lastTouchY === undefined || lastTouchX === null || lastTouchY === null) return;
+
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+
+        // 计算触摸点相对于中心的坐标
+        const deltaX = currentX - steeringCenterX;
+        const deltaY = currentY - steeringCenterY;
+
+        // 计算移动方向
+        const moveX = currentX - lastTouchX;
+        const moveY = currentY - lastTouchY;
+
+        // 计算角度：基于触摸点相对于中心的位置和移动方向
+        let angle = 0;
+
+        // 计算距离中心的距离，用于限制最大角度
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const maxDistance = 100; // 假设方向盘的最大半径为100
+        const normalizedDistance = Math.min(distance / maxDistance, 1);
+
+        // 计算角度：使用更直观的方向盘逻辑
+        // 方向盘逻辑：顺时针转动为右转（正角度），逆时针转动为左转（负角度）
+
+        // 计算触摸点相对于中心的角度（0-360度）
+        let touchAngle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+        if (touchAngle < 0) touchAngle += 360;
+
+        // 计算上一个触摸点相对于中心的角度
+        const lastDeltaX = lastTouchX - steeringCenterX;
+        const lastDeltaY = lastTouchY - steeringCenterY;
+        let lastTouchAngle = Math.atan2(lastDeltaY, lastDeltaX) * (180 / Math.PI);
+        if (lastTouchAngle < 0) lastTouchAngle += 360;
+
+        // 计算角度变化
+        let angleChange = touchAngle - lastTouchAngle;
+
+        // 处理角度变化的边界情况
+        if (angleChange > 180) angleChange -= 360;
+        if (angleChange < -180) angleChange += 360;
+
+        // 累计角度变化，但限制在-60到60之间
+        const newAngle = Math.max(-90, Math.min(90, this.data.steeringAngle + angleChange * 2));
+        angle = newAngle;
+
+        // 计算fx值（向左为负，向右为正），取反以修正方向
+        const fx = Math.round(angle);
+
+        this.setData({
+            steeringAngle: angle,
+            steeringFx: fx,
+            lastTouchX: currentX,
+            lastTouchY: currentY
+        });
+
+        // 清除之前的定时器，重新设置新的定时器
+        // 当用户停止移动300毫秒后，发送控制指令
+        if (this.steeringTimer) {
+            clearTimeout(this.steeringTimer);
+        }
+        this.steeringTimer = setTimeout(() => {
+            console.log('发送控制指令（停止移动后）');
+            this.sendCarCommand();
+        }, 300);
+    },
+
+    // 方向盘触摸结束
+    onSteeringTouchEnd() {
+        // 清除定时器
+        if (this.steeringTimer) {
+            clearTimeout(this.steeringTimer);
+            this.steeringTimer = null;
+        }
+        
+        // 保存当前角度，用于发送最终指令
+        const finalAngle = this.data.steeringAngle;
+        const finalFx = this.data.steeringFx;
+        
+        // 发送最终控制指令
+        console.log('发送控制指令（触摸结束时）');
+        this.sendCarCommand();
+        
+        // 触摸结束后，方向盘自动回正
+        this.setData({
+            steeringAngle: 0,
+            steeringFx: 0,
+            lastTouchX: null,
+            lastTouchY: null
+        });
+        
+        // 发送归位指令（角度为0）
+        console.log('发送控制指令（归位时）');
+        this.sendCarCommand();
+    },
+
+    // 挡位切换
+    onGearChange(e) {
+        const { gear } = e.currentTarget.dataset;
+        let carValue = 0;
+
+        if (gear === 'D') {
+            carValue = 1;
+        } else if (gear === 'R') {
+            carValue = -1;
+        } else {
+            carValue = 0;
+        }
+
+        this.setData({
+            currentGear: gear,
+            currentCarValue: carValue
+        });
+
+        // 实时发送控制指令
+        this.sendCarCommand();
+    },
+
+    // 发送小车控制指令
+    sendCarCommand() {
+        const { currentCarDevice, steeringFx, currentCarValue, leftLight, rightLight, headLight, sosLight, currentGear } = this.data;
+        
+        if (!currentCarDevice || !currentCarDevice.publishTopic) {
+            console.log('未设置小车设备或发布主题');
+            return;
+        }
+
+        // 构建JSON数据，合并车灯数据
+        const command = {
+            fx: steeringFx,
+            car: currentCarValue,
+            L: leftLight,
+            R: rightLight,
+            D: headLight,
+            SOS: sosLight,
+            RR: currentGear === 'R' ? 1 : 0
+        };
+
+        // 发送MQTT消息
+        if (client && client.connected) {
+            const message = JSON.stringify(command);
+            console.log('准备发送控制指令:', message);
+            // 移除消息重复检查，确保每次都发送
+            this.lastCarCommand = message;
+            client.publish(currentCarDevice.publishTopic, message, { qos: 0 }, (err) => {
+                if (err) {
+                    console.error('发送小车控制指令失败:', err);
+                } else {
+                    console.log('发送小车控制指令成功:', message);
+                }
+            });
+        } else {
+            console.log('MQTT客户端未连接');
+        }
+    },
+
+    // 左转灯控制
+    onLeftLightToggle() {
+        const { leftLight, rightLight } = this.data;
+        const newState = leftLight === 0 ? 1 : 0;
+        
+        // 左右转灯互斥：如果开启左转灯，关闭右转灯
+        if (newState === 1 && rightLight === 1) {
+            this.setData({
+                leftLight: 1,
+                rightLight: 0
+            });
+        } else {
+            this.setData({
+                leftLight: newState
+            });
+        }
+        
+        this.sendCarCommand();
+    },
+
+    // 右转灯控制
+    onRightLightToggle() {
+        const { leftLight, rightLight } = this.data;
+        const newState = rightLight === 0 ? 1 : 0;
+        
+        // 左右转灯互斥：如果开启右转灯，关闭左转灯
+        if (newState === 1 && leftLight === 1) {
+            this.setData({
+                rightLight: 1,
+                leftLight: 0
+            });
+        } else {
+            this.setData({
+                rightLight: newState
+            });
+        }
+        
+        this.sendCarCommand();
+    },
+
+    // 车灯控制
+    onHeadLightToggle() {
+        const { headLight } = this.data;
+        const newState = headLight === 0 ? 1 : 0;
+        
+        this.setData({
+            headLight: newState
+        });
+        
+        this.sendCarCommand();
+    },
+
+    // 双闪灯控制
+    onSosLightToggle() {
+        const { sosLight } = this.data;
+        const newState = sosLight === 0 ? 1 : 0;
+        
+        this.setData({
+            sosLight: newState
+        });
+        
+        this.sendCarCommand();
     },
 
     // 电机快捷控制

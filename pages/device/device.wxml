@@ -13,8 +13,8 @@
           </view>
           <view class="device-content">
             <view class="device-name">{{item.name}}</view>
-            <view class="device-topic" wx:if="{{item.type !== 'switch' && item.type !== 'led' && item.type !== 'motor'}}">订阅主题：{{item.topic}}</view>
-            <view class="device-topic" wx:if="{{item.type === 'switch' || item.type === 'led' || item.type === 'motor'}}">发布主题：{{item.publishTopic}}</view>
+            <view class="device-topic" wx:if="{{item.type !== 'switch' && item.type !== 'led' && item.type !== 'motor' && item.type !== 'car'}}">订阅主题：{{item.topic}}</view>
+            <view class="device-topic" wx:if="{{item.type === 'switch' || item.type === 'led' || item.type === 'motor' || item.type === 'car'}}">发布主题：{{item.publishTopic}}</view>
           </view>
         </view>
         <view class="device-action">
@@ -96,10 +96,17 @@
       <image src="/images/dianji.png" mode="aspectFit"></image>
       <text>电机</text>
     </view>
+          <!--小车-->
+          <view class="type-option {{newDevice.type === 'car' ? 'selected' : ''}}" 
+          data-type="car" 
+          bindtap="onDeviceTypeSelect">
+      <image src="/images/car.png" mode="aspectFit"></image>
+      <text>小车</text>
+    </view>
           </view>
         </view>
 
-        <view class="form-item" wx:if="{{newDevice.type !== 'switch' && newDevice.type !== 'led' && newDevice.type !== 'motor'}}">
+        <view class="form-item" wx:if="{{newDevice.type !== 'switch' && newDevice.type !== 'led' && newDevice.type !== 'motor' && newDevice.type !== 'car'}}">
           <text class="label">订阅主题</text>
           <input class="input" placeholder="请输入订阅主题" value="{{newDevice.topic}}" bindinput="onTopicInput"/>
         </view>
@@ -109,9 +116,9 @@
           <input class="input" placeholder="请输入发布主题，如：myhome/leds" value="{{newDevice.publishTopic}}" bindinput="onPublishTopicInput"/>
         </view>
 
-        <view class="form-item" wx:if="{{newDevice.type === 'motor'}}">
+        <view class="form-item" wx:if="{{newDevice.type === 'motor' || newDevice.type === 'car'}}">
           <text class="label">发布主题</text>
-          <input class="input" placeholder="请输入发布主题，如：myhome/motor" value="{{newDevice.publishTopic}}" bindinput="onPublishTopicInput"/>
+          <input class="input" placeholder="请输入发布主题，如：myhome" value="{{newDevice.publishTopic}}" bindinput="onPublishTopicInput"/>
         </view>
 
         <view class="form-item" wx:if="{{newDevice.type === 'switch' || newDevice.type === 'led'}}">
@@ -146,7 +153,7 @@
           <input class="input" placeholder="请输入设备名称" value="{{editDevice.name}}" bindinput="onEditDeviceNameInput"/>
         </view>
 
-        <block wx:if="{{editDevice.type !== 'switch' && editDevice.type !== 'led' && editDevice.type !== 'motor'}}">
+        <block wx:if="{{editDevice.type !== 'switch' && editDevice.type !== 'led' && editDevice.type !== 'motor' && editDevice.type !== 'car'}}">
           <view class="form-item">
             <text class="label">订阅主题</text>
             <input class="input" placeholder="请输入订阅主题" value="{{editDevice.topic}}" bindinput="onEditTopicInput"/>
@@ -171,6 +178,13 @@
         </block>
 
         <block wx:if="{{editDevice.type === 'motor'}}">
+          <view class="form-item">
+            <text class="label">发布主题</text>
+            <input class="input" placeholder="请输入发布主题" value="{{editDevice.publishTopic}}" bindinput="onEditPublishTopicInput"/>
+          </view>
+        </block>
+
+        <block wx:if="{{editDevice.type === 'car'}}">
           <view class="form-item">
             <text class="label">发布主题</text>
             <input class="input" placeholder="请输入发布主题" value="{{editDevice.publishTopic}}" bindinput="onEditPublishTopicInput"/>

@@ -1,8 +1,11 @@
+const api = require('../../utils/api');
+
 Page({
   data: {
     devices: [],
     showAddDialog: false,
     showEditDialog: false,
+    wxId: null,
     mqttConfig: {
       host: '',
       port: '',
@@ -35,12 +38,17 @@ Page({
       { text: '水质', value: 'waterquality', icon: 'shuizhi' },
       { text: '水质', value: 'turang', icon: 'tr' },
       { text: '水质', value: 'fengsu', icon: 'fs' },
-      { text: '电机', value: 'motor', icon: 'dianji' }
+      { text: '电机', value: 'motor', icon: 'dianji' },
+      { text: '小车', value: 'car', icon: 'car' }
     ],
     currentDeviceType: null
   },
 
   onLoad() {
+    // 获取微信ID
+    const app = getApp();
+    const wxId = app.getWxId();
+    
     // 从本地存储加载设备配置和MQTT配置
     const devices = wx.getStorageSync('devices') || [];
     const mqttConfig = wx.getStorageSync('mqttConfig') || {
@@ -50,6 +58,7 @@ Page({
       password: ''
     };
     this.setData({ 
+      wxId,
       devices,
       mqttConfig,
       currentDeviceType: this.data.deviceTypes[0]
@@ -152,8 +161,8 @@ Page({
     });
   },
 
-  addDevice() {
-    const { devices, newDevice } = this.data;
+  async addDevice() {
+    const { devices, newDevice, wxId } = this.data;
     
     // 验证设备信息
     if (!newDevice.name) {
@@ -187,8 +196,8 @@ Page({
         });
         return;
       }
-    } else if (newDevice.type === 'motor') {
-      // 验证电机类型的必填字段
+    } else if (newDevice.type === 'motor' || newDevice.type === 'car') {
+      // 验证电机和小车类型的必填字段
       if (!newDevice.publishTopic) {
         wx.showToast({
           title: '请填写发布主题',
@@ -227,12 +236,11 @@ Page({
       showChart: true
     };
 
-    // 根据设备类型添加不同的属性
     if (newDevice.type === 'switch' || newDevice.type === 'led') {
       newDeviceData.publishTopic = newDevice.publishTopic;
       newDeviceData.onCommand = newDevice.onCommand;
       newDeviceData.offCommand = newDevice.offCommand;
-    } else if (newDevice.type === 'motor') {
+    } else if (newDevice.type === 'motor' || newDevice.type === 'car') {
       newDeviceData.publishTopic = newDevice.publishTopic;
     } else {
       newDeviceData.topic = newDevice.topic;
@@ -240,8 +248,28 @@ Page({
 
     const updatedDevices = [...devices, newDeviceData];
 
-    // 保存设备列表
+    // 显示加载提示
+    wx.showLoading({
+      title: '添加中...',
+      mask: true
+    });
+
+    try {
+      // 1. 保存到本地存储
     wx.setStorageSync('devices', updatedDevices);
+      
+      // 2. 同步到数据库
+      if (wxId) {
+        const result = await api.addDevice(wxId, newDeviceData);
+        
+        if (result.success) {
+          console.log('设备已同步到数据库');
+        } else {
+          console.error('同步设备失败:', result.error);
+        }
+      }
+      
+      wx.hideLoading();
     
     this.setData({
       devices: updatedDevices,
@@ -270,6 +298,15 @@ Page({
       title: '添加成功',
       icon: 'success'
     });
+    } catch (error) {
+      wx.hideLoading();
+      console.error('添加设备失败:', error);
+      
+      wx.showToast({
+        title: '添加成功(已保存到本地)',
+        icon: 'success'
+      });
+    }
   },
 
   toggleChart(e) {
@@ -285,12 +322,33 @@ Page({
     wx.setStorageSync('devices', devices);
   },
 
-  deleteDevice(e) {
+  async deleteDevice(e) {
     const { id } = e.currentTarget.dataset;
+    const { wxId } = this.data;
     const updatedDevices = this.data.devices.filter(device => device.id !== id);
     
-    // 保存设备列表
+    // 显示加载提示
+    wx.showLoading({
+      title: '删除中...',
+      mask: true
+    });
+
+    try {
+      // 1. 保存到本地存储
     wx.setStorageSync('devices', updatedDevices);
+      
+      // 2. 从数据库删除
+      if (wxId) {
+        const result = await api.deleteDevice(wxId, id);
+        
+        if (result.success) {
+          console.log('设备已从数据库删除');
+        } else {
+          console.error('从数据库删除设备失败:', result.error);
+        }
+      }
+      
+      wx.hideLoading();
     
     this.setData({ devices: updatedDevices });
 
@@ -307,6 +365,15 @@ Page({
       title: '删除成功',
       icon: 'success'
     });
+    } catch (error) {
+      wx.hideLoading();
+      console.error('删除设备失败:', error);
+      
+      wx.showToast({
+        title: '删除成功(已从本地删除)',
+        icon: 'success'
+      });
+    }
   },
 
   stopPropagation() {
@@ -360,8 +427,8 @@ Page({
   },
 
   // 更新设备
-  updateDevice() {
-    const { devices, editDevice } = this.data;
+  async updateDevice() {
+    const { devices, editDevice, wxId } = this.data;
     
     // 验证设备信息
     if (!editDevice.name) {
@@ -395,8 +462,8 @@ Page({
         });
         return;
       }
-    } else if (editDevice.type === 'motor') {
-      // 验证电机类型的必填字段
+    } else if (editDevice.type === 'motor' || editDevice.type === 'car') {
+      // 验证电机和小车类型的必填字段
       if (!editDevice.publishTopic) {
         wx.showToast({
           title: '请填写发布主题',
@@ -435,8 +502,28 @@ Page({
       device.id === editDevice.id ? editDevice : device
     );
 
-    // 保存设备列表
+    // 显示加载提示
+    wx.showLoading({
+      title: '更新中...',
+      mask: true
+    });
+
+    try {
+      // 1. 保存到本地存储
     wx.setStorageSync('devices', updatedDevices);
+      
+      // 2. 同步到数据库
+      if (wxId) {
+        const result = await api.updateDevice(wxId, editDevice);
+        
+        if (result.success) {
+          console.log('设备已同步到数据库');
+        } else {
+          console.error('同步设备失败:', result.error);
+        }
+      }
+      
+      wx.hideLoading();
     
     this.setData({
       devices: updatedDevices,
@@ -456,5 +543,14 @@ Page({
       title: '更新成功',
       icon: 'success'
     });
+    } catch (error) {
+      wx.hideLoading();
+      console.error('更新设备失败:', error);
+      
+      wx.showToast({
+        title: '更新成功(已保存到本地)',
+        icon: 'success'
+      });
+    }
   }
 }) 

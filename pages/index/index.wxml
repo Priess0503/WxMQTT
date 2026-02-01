@@ -8,6 +8,10 @@
       </view>
     </view>
     <view class="header-right">
+      <button class="action-btn sync-btn" bindtap="syncDevices">
+        <image src="/images/sync.png" mode="aspectFit"></image>
+        <text>同步</text>
+      </button>
       <button class="action-btn config-btn" bindtap="toMqttConfig">
         <image src="/images/settings.png" mode="aspectFit"></image>
         <text>配置</text>
@@ -31,13 +35,13 @@
       <view class="card-header">
         <view class="card-icon-wrapper">
           <image class="card-icon" 
-                 src="{{device.type === 'temperature' ? '/images/temperature.png' : device.type === 'humidity' ? '/images/humidity.png':device.type === 'turang' ? '/images/tr.png' : device.type === 'waterquality' ? '/images/shuizhi.png':device.type === 'fengsu' ? '/images/fs.png' : device.type === 'led' ? '/images/led.png' : device.type === 'motor' ? '/images/dianji.png' : '/images/switch.png'}}" 
+                 src="{{device.type === 'temperature' ? '/images/temperature.png' : device.type === 'humidity' ? '/images/humidity.png':device.type === 'turang' ? '/images/tr.png' : device.type === 'waterquality' ? '/images/shuizhi.png':device.type === 'fengsu' ? '/images/fs.png' : device.type === 'led' ? '/images/led.png' : device.type === 'motor' ? '/images/dianji.png' : device.type === 'car' ? '/images/car.png' : '/images/switch.png'}}" 
                  mode="aspectFit"></image>
         </view>
         <text class="card-title">{{device.name}}</text>
       </view>
       <view class="card-content">
-        <block wx:if="{{device.type !== 'switch' && device.type !== 'led' && device.type !== 'motor'}}">
+        <block wx:if="{{device.type !== 'switch' && device.type !== 'led' && device.type !== 'motor' && device.type !== 'car'}}">
           <text class="value">{{deviceData[device.id] ? deviceData[device.id].value : '--'}}</text>
           <text class="unit">{{device.type === 'temperature' ? '°C' : device.type === 'humidity' ? '%' : device.type === 'turang' ? '%': device.type === 'fengsu' ? 'm/s': 'ppm'}}</text>
           <text wx:if="{{device.type === 'waterquality' && deviceData[device.id] && deviceData[device.id].quality}}" 
@@ -81,6 +85,18 @@
             </view>
             <view class="motor-more" catchtap="showMotorControl" data-id="{{device.id}}">
               <text>更多»</text>
+            </view>
+          </view>
+        </block>
+        <block wx:elif="{{device.type === 'car'}}">
+          <view class="car-control-row">
+            <view class="car-status">
+              <image class="car-steering-wheel" 
+                     src="/images/fxp.png" 
+                     mode="aspectFit"></image>
+            </view>
+            <view class="car-more" catchtap="showCarControl" data-id="{{device.id}}">
+              <text>点击控制»</text>
             </view>
           </view>
         </block>
@@ -240,6 +256,140 @@
   <view class="empty-state" wx:if="{{devices.length === 0}}">
     <image src="/images/empty.png" mode="aspectFit"/>
     <text>空空如也</text>
-    <button class="add-device-btn" bindtap="toDeviceManager">添加设备</button>
+    <button class="add-device-btn" bindtap="{{isLoggedIn ? 'toDeviceManager' : 'toLogin'}}">
+      {{isLoggedIn ? '添加设备' : '同步后添加设备'}}
+    </button>
   </view>
+
+  <!-- 隐私政策弹窗 -->
+  <view class="privacy-dialog-mask" wx:if="{{showPrivacyDialog}}" bindtap="closePrivacyDialog">
+    <view class="privacy-dialog" catchtap="stopPropagation">
+      <view class="privacy-dialog-header">
+        <text class="privacy-dialog-title">隐私政策与用户协议</text>
+        <view class="close-btn" bindtap="closePrivacyDialog">×</view>
+      </view>
+      
+      <view class="privacy-dialog-content">
+        <view class="privacy-scroll">
+          <text class="privacy-title">用户服务协议</text>
+          <text class="privacy-text">欢迎使用智慧物联网监控小程序。本协议是您与我们之间关于使用本服务的法律协议。</text>
+          <text class="privacy-text">1. 您必须年满18周岁才能使用本服务。</text>
+          <text class="privacy-text">2. 您应妥善保管您的账号和密码，对使用您账号进行的所有操作负全部责任。</text>
+          <text class="privacy-text">3. 我们有权根据业务需要随时调整本协议内容，调整后的协议将在小程序内公布。</text>
+          
+          <text class="privacy-title">隐私政策</text>
+          <text class="privacy-text">我们非常重视您的隐私保护，致力于为您提供安全、可靠的服务。</text>
+          <text class="privacy-text">1. 我们会收集您的微信头像、昵称等基本信息，用于完善您的用户资料。</text>
+          <text class="privacy-text">2. 我们不会将您的个人信息泄露给任何第三方，除非得到您的明确授权。</text>
+          <text class="privacy-text">3. 我们会采取各种安全措施保护您的个人信息，防止信息泄露、丢失。</text>
+          <text class="privacy-text">4. 您有权随时查看、修改或删除您的个人信息。</text>
+        </view>
+        
+        <view class="privacy-agree">
+          <view class="checkbox" bindtap="toggleAgree">
+            <view class="checkbox-inner {{agreePrivacy ? 'checked' : ''}}">
+              <text wx:if="{{agreePrivacy}}" class="checkbox-icon">✓</text>
+            </view>
+          </view>
+          <text class="agree-text">我已阅读并同意《用户服务协议》和《隐私政策》</text>
+        </view>
+      </view>
+      
+      <view class="privacy-dialog-footer">
+        <button class="cancel-btn" bindtap="closePrivacyDialog">取消</button>
+        <button class="confirm-btn" bindtap="confirmPrivacy" disabled="{{!agreePrivacy}}">同意并登录</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 小车控制弹窗 -->
+  <view class="car-dialog-mask" wx:if="{{showCarDialog}}" bindtap="closeCarDialog">
+    <view class="car-dialog" catchtap="stopPropagation">
+      <view class="car-dialog-header">
+        <text class="car-dialog-title">{{currentCarDevice.name}} - 小车控制</text>
+        <view class="close-btn" bindtap="closeCarDialog">×</view>
+      </view>
+      
+      <view class="car-dialog-content">
+        <!-- 车灯控制 -->
+        <view class="light-control">
+          <view class="control-label">
+            <text>车灯控制</text>
+          </view>
+          <view class="light-buttons">
+            <image class="light-btn" 
+                   src="{{leftLight === 1 ? '/images/L1.png' : '/images/L0.png'}}" 
+                   mode="aspectFit"
+                   bindtap="onLeftLightToggle"></image>
+            <image class="light-btn" 
+                   src="{{headLight === 1 ? '/images/D1.png' : '/images/D0.png'}}" 
+                   mode="aspectFit"
+                   bindtap="onHeadLightToggle"></image>
+            <image class="light-btn" 
+                   src="{{sosLight === 1 ? '/images/S1.png' : '/images/S0.png'}}" 
+                   mode="aspectFit"
+                   bindtap="onSosLightToggle"></image>
+            <image class="light-btn" 
+                   src="{{rightLight === 1 ? '/images/R1.png' : '/images/R0.png'}}" 
+                   mode="aspectFit"
+                   bindtap="onRightLightToggle"></image>
+          </view>
+        </view>
+
+        <!-- 方向盘控制 -->
+        <view class="steering-control">
+          <view class="control-label">
+            <image src="/images/fxp.png" mode="aspectFit" class="control-icon"></image>
+            <text>方向盘控制</text>
+          </view>
+          <view class="steering-wheel-container">
+            <view class="steering-wheel-wrapper" id="steeringWrapper">
+              <image class="steering-wheel" 
+                     id="steeringWheel"
+                     src="/images/fxp.png" 
+                     mode="aspectFit"
+                     catchtouchstart="onSteeringTouchStart"
+                     catchtouchmove="onSteeringTouchMove"
+                     catchtouchend="onSteeringTouchEnd"
+                     style="transform: rotate({{steeringAngle}}deg);"></image>
+              <view class="steering-center-point"></view>
+            </view>
+            <view class="steering-info">
+              <text>角度: {{steeringAngle}}°</text>
+              <text>fx: {{steeringFx}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 挡位控制 -->
+        <view class="gear-control">
+          <view class="control-label">
+            <text>挡位控制</text>
+          </view>
+          <view class="gear-buttons">
+            <view class="gear-btn {{currentGear === 'D' ? 'active' : ''}}" 
+                  bindtap="onGearChange" 
+                  data-gear="D">
+              <text>D 前进</text>
+            </view>
+            <view class="gear-btn {{currentGear === 'R' ? 'active' : ''}}" 
+                  bindtap="onGearChange" 
+                  data-gear="R">
+              <text>R 后退</text>
+            </view>
+            <view class="gear-btn {{currentGear === 'P' ? 'active' : ''}}" 
+                  bindtap="onGearChange" 
+                  data-gear="P">
+              <text>P 停车</text>
+            </view>
+          </view>
+          <view class="gear-info">
+            <text>当前挡位: {{currentGear}}</text>
+            <text>car: {{currentCarValue}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
 </view>

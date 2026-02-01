@@ -22,6 +22,202 @@
   gap: 20rpx;  /* 增加按钮之间的间距 */
 }
 
+/* 同步按钮样式 */
+.sync-btn {
+  background-color: #52c41a !important;
+  width: 140rpx !important;
+  
+}
+
+.sync-btn image {
+  width: 24rpx;
+  height: 24rpx;
+  margin-right: 6rpx;
+}
+
+.sync-btn text {
+  font-size: 24rpx;
+  color: #fff;
+}
+
+/* 隐私政策弹窗样式 */
+.privacy-dialog-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.privacy-dialog {
+  width: 85%;
+  max-width: 600rpx;
+  background-color: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 20rpx 40rpx rgba(0, 0, 0, 0.2);
+}
+
+.privacy-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  background-color: #f8f8f8;
+}
+
+.privacy-dialog-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.close-btn {
+  font-size: 40rpx;
+  color: #999;
+  line-height: 1;
+}
+
+.close-btn:active {
+  color: #666;
+}
+
+.privacy-dialog-content {
+  padding: 30rpx;
+}
+
+.privacy-scroll {
+  max-height: 500rpx;
+  overflow-y: auto;
+  margin-bottom: 30rpx;
+}
+
+.privacy-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.privacy-text {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.privacy-agree {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.checkbox {
+  margin-right: 16rpx;
+}
+
+.checkbox-inner {
+  width: 32rpx;
+  height: 32rpx;
+  border: 2rpx solid #d9d9d9;
+  border-radius: 6rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.checkbox-inner.checked {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+.checkbox-icon {
+  font-size: 22rpx;
+  color: #fff;
+  font-weight: bold;
+}
+
+.agree-text {
+  font-size: 24rpx;
+  color: #666;
+  flex: 1;
+}
+
+.privacy-dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30rpx 30rpx;
+}
+
+/* 在第161行的样式中修改 */
+.cancel-btn {
+  width: 100px !important; /* 添加 !important 确保优先级 */
+  height: 72rpx;
+  font-size: 26rpx;
+  color: #666;
+  background-color: #f0f0f0;
+  border-radius: 10rpx;
+  border: 1rpx solid #d9d9d9;
+  margin-right: 20rpx;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cancel-btn::after {
+  border: none;
+}
+
+.cancel-btn:active {
+  background-color: #e0e0e0;
+  transform: scale(0.98);
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.05);
+}
+
+.confirm-btn {
+  width: 120px!important;
+  height: 72rpx;
+  font-size: 26rpx;
+  color: #fff;
+  background-color: #1890ff;
+  border-radius: 10rpx;
+  border: none;
+  box-shadow: 0 4rpx 16rpx rgba(24, 144, 255, 0.3);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-btn::after {
+  border: none;
+}
+
+.confirm-btn:active {
+  background-color: #40a9ff;
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(24, 144, 255, 0.2);
+}
+
+.confirm-btn:disabled {
+  background-color: #d9d9d9;
+  color: #fff;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
 /* 按钮系统 */
 .action-btn {
   display: inline-flex;
@@ -287,9 +483,44 @@
   color: white !important;
   padding: 20rpx 48rpx;
   border-radius: 12rpx;
+}
+
+/* 登录提示样式 */
+.login-tip {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(24, 144, 255, 0.1);
+  border-top: 1rpx solid rgba(24, 144, 255, 0.3);
+  padding: 20rpx;
+  z-index: 999;
+}
+
+.login-tip-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.login-tip-text {
   font-size: 28rpx;
-  font-weight: 500;
-  box-shadow: 0 4rpx 16rpx rgba(24, 144, 255, 0.2);
+  color: #1890ff;
+  margin-right: 20rpx;
+}
+
+.login-tip-btn {
+  padding: 0 30rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  font-size: 26rpx;
+  color: #fff;
+  background-color: #1890ff;
+  border-radius: 30rpx;
+  border: none;
+}
+
+.login-tip-btn::after {
   border: none;
 }
 
@@ -718,25 +949,7 @@
   background-color: #fff;
 }
 
-.cancel-btn {
-  flex: 1;
-  height: 40px;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  background-color: #fff;
-  color: #666;
-  font-size: 14px;
-}
 
-.confirm-btn {
-  flex: 1;
-  height: 40px;
-  border: none;
-  border-radius: 8px;
-  background-color: #1890ff;
-  color: #fff;
-  font-size: 14px;
-}
 
 /* 更多按钮样式 */
 /* 更多按钮样式优化 */
@@ -897,10 +1110,40 @@
   width: 100%;
 }
 
-.led-status {
+.led-status.header-right {
   display: flex;
   align-items: center;
   gap: 16rpx;
+}
+
+.sync-btn {
+  background-color: #52c41a !important;
+}
+
+.sync-btn image {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 8rpx;
+}
+
+.sync-btn text {
+  font-size: 28rpx;
+  color: #fff;
+}
+
+.sync-btn {
+  background-color: #52c41a !important;
+}
+
+.sync-btn image {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 8rpx;
+}
+
+.sync-btn text {
+  font-size: 28rpx;
+  color: #fff;
 }
 
 .led-status text {
@@ -1230,4 +1473,253 @@
 .main-btn:active {
   transform: translateY(2rpx);
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
+}
+
+/* 小车控制弹窗样式 */
+.car-dialog-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.car-dialog {
+  background: white;
+  border-radius: 24rpx;
+  width: 90%;
+  max-width: 700rpx;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.2);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  position: relative;
+}
+
+.car-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 32rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  background: white;
+  position: relative;
+  z-index: 1;
+}
+
+.car-dialog-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.car-dialog-content {
+  padding: 32rpx;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: white;
+  position: relative;
+  z-index: 1;
+}
+
+/* 车灯控制 */
+.light-control {
+  margin-bottom: 40rpx;
+}
+
+.light-buttons {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.light-btn {
+  width: 48rpx;
+  height: 48rpx;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.light-btn:active {
+  transform: scale(0.9);
+}
+
+/* 方向盘控制 */
+.steering-control {
+  margin-bottom: 40rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.steering-wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.steering-wheel-wrapper {
+  position: relative;
+  width: 300rpx;
+  height: 300rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.steering-wheel {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.1s ease-out;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.steering-center-point {
+  position: absolute;
+  width: 20rpx;
+  height: 20rpx;
+  background: #1890ff;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.steering-info {
+  display: flex;
+  gap: 32rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 挡位控制 */
+.gear-control {
+  margin-bottom: 40rpx;
+}
+
+.gear-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.gear-btn {
+  padding: 24rpx;
+  border: 2rpx solid #e8e8e8;
+  border-radius: 12rpx;
+  background: white;
+  font-size: 28rpx;
+  color: #666;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.gear-btn.active {
+  border-color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.gear-info {
+  display: flex;
+  gap: 32rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 小车控制行 */
+.car-control-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.car-status {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.car-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.car-steering-wheel {
+  width: 60rpx;
+  height: 60rpx;
+  transition: transform 0.3s ease;
+}
+
+.device-card[data-type="car"]:active .car-steering-wheel {
+  transform: rotate(15deg) scale(1.05);
+}
+
+.car-status text {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.car-more {
+  color: #1890ff;
+  font-size: 26rpx;
+  padding: 8rpx 16rpx;
+}
+
+/* 小车卡片特殊样式 */
+.device-card[data-type="car"] {
+  background: linear-gradient(135deg, #ffffff, #f8faff);
+  border: 1rpx solid rgba(24, 144, 255, 0.1);
+  box-shadow: 0 10rpx 30rpx rgba(24, 144, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.device-card[data-type="car"]::after {
+  background: linear-gradient(180deg, #1890ff, #40a9ff);
+}
+
+.device-card[data-type="car"]:active {
+  transform: scale(0.98) translateY(-2rpx);
+  box-shadow: 0 8rpx 24rpx rgba(24, 144, 255, 0.12);
+}
+
+.device-card[data-type="car"] .card-icon-wrapper {
+  background: rgba(24, 144, 255, 0.1);
+}
+
+.device-card[data-type="car"] .car-status text {
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.device-card[data-type="car"] .car-more {
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.1), rgba(24, 144, 255, 0.15));
+  border-radius: 12rpx;
+  padding: 12rpx 20rpx;
+  transition: all 0.3s ease;
+}
+
+.device-card[data-type="car"] .car-more:active {
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.2), rgba(24, 144, 255, 0.25));
+  transform: scale(0.96);
 }
